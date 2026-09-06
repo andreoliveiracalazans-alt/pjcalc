@@ -1,0 +1,8 @@
+{
+  "name": "calculos-trabalhistas-calazans",
+  "version": "1.0.0",
+  "description": "Plataforma de Cálculos Trabalhistas PJe-Calc - Dr. André Calazans",
+  "scripts": {
+    "start": "serve ."
+  }
+}
