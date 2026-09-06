@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Dr. André Calazans | Cálculos Trabalhistas PJe-Calc & Perícias Judiciais</title>
-  <meta name="description" content="Assessoria pericial em cálculos trabalhistas no PJe-Calc para escritórios de advocacia. Estimativa inicial a R$ 200 e liquidação final a R$ 300. Arquivo .PJC incluso. Parcele em até 12x ou repasse o link ao cliente. Em conformidade com a LGPD.">
-  <meta name="keywords" content="calculos trabalhistas precos, pje calc 200 reais, liquidacao de sentenca 300 reais, laudo pericial trabalhista whatsapp, perito assistente tecnico trabalhista, LGPD advocacia, Andre Calazans">
+  <meta name="description" content="Assessoria pericial em cálculos trabalhistas no PJe-Calc para escritórios de advocacia. Estimativa inicial a R$ 200 e liquidação final a R$ 300. Arquivo .PJC incluso. Parcele em até 12x ou repasse o link ao cliente.">
+  <meta name="keywords" content="calculos trabalhistas precos, pje calc 200 reais, liquidacao de sentenca 300 reais, laudo pericial trabalhista whatsapp, perito assistente tecnico trabalhista, Andre Calazans">
   <meta name="author" content="Dr. André Oliveira Calazans">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://andrecalazans.com.br">
 
-  <!-- Schema.org JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -26,39 +25,7 @@
       "addressRegion": "RJ",
       "addressCountry": "BR"
     },
-    "description": "Assessoria pericial técnica em software PJe-Calc para advogados trabalhistas com emissão de laudo demonstrativo e arquivo nativo .PJC.",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Tabela de Serviços Periciais",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Cálculo Inicial (Estimativa Art. 840 CLT)"
-          },
-          "price": "200.00",
-          "priceCurrency": "BRL"
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Cálculo Final (Liquidação de Sentença)"
-          },
-          "price": "300.00",
-          "priceCurrency": "BRL"
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Laudos e Perícias Judiciais Complexas"
-          },
-          "description": "Orçamento sob medida via WhatsApp conforme a complexidade processual."
-        }
-      ]
-    }
+    "description": "Assessoria pericial técnica em software PJe-Calc para advogados trabalhistas com emissão de laudo demonstrativo e arquivo nativo .PJC."
   }
   </script>
 
@@ -71,8 +38,8 @@
     :root {
       --primary: #0f172a;
       --primary-light: #1e293b;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
+      --accent: #0073e6;
+      --accent-hover: #005bb5;
       --infinite: #00e599;
       --whatsapp: #25d366;
       --whatsapp-hover: #20ba5a;
@@ -82,16 +49,16 @@
       --text: #1e293b;
       --muted: #64748b;
       --success: #16a34a;
-      --danger: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; }
 
-    /* Barra Superior */
+    /* Barra Superior com texto na linha de baixo */
     header { background: var(--primary); color: #fff; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .brand { font-size: 1.15rem; font-weight: 700; }
-    .brand span { color: var(--infinite); font-weight: 400; font-size: 0.9rem; }
+    .brand-container { display: flex; flex-direction: column; }
+    .brand-title { font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
+    .brand-subtitle { color: var(--infinite); font-size: 0.85rem; font-weight: 500; margin-top: 0.15rem; }
     .btn-header { background: var(--accent); color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
     .btn-header:hover { background: var(--accent-hover); }
 
@@ -110,7 +77,7 @@
     .btn-google:hover { background: #f8fafc; border-color: #94a3b8; }
     .btn-google svg { width: 20px; height: 20px; }
 
-    /* Faixa de Parcelamento / InfinitePay */
+    /* Faixa InfinitePay */
     .split-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(0, 229, 153, 0.3); border-radius: 12px; padding: 2rem; max-width: 1080px; margin: 0 auto 4rem auto; color: #fff; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; }
     .split-text h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; }
     .split-text h3 span { color: var(--infinite); }
@@ -124,7 +91,7 @@
     
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.8rem; text-align: left; }
     .pricing-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 2.2rem 1.8rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .pricing-card.featured { border-color: var(--accent); box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12); }
+    .pricing-card.featured { border-color: var(--accent); box-shadow: 0 10px 25px -5px rgba(0, 115, 230, 0.15); }
     .badge-popular { position: absolute; top: -12px; right: 20px; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; letter-spacing: 0.5px; }
     
     .card-service-title { font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; }
@@ -141,30 +108,14 @@
     .feature-list li { display: flex; align-items: flex-start; gap: 0.5rem; }
     .feature-list li::before { content: "✔"; color: var(--success); font-weight: bold; }
 
-    .btn-card { background: var(--primary); color: #fff; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 600; text-align: center; cursor: pointer; text-decoration: none; display: block; width: 100%; transition: background 0.2s; font-size: 0.95rem; }
-    .btn-card:hover { background: var(--primary-light); }
-    .pricing-card.featured .btn-card { background: var(--accent); }
-    .pricing-card.featured .btn-card:hover { background: var(--accent-hover); }
+    /* Botão Azul para Solicitar Cálculo */
+    .btn-card-blue { background: var(--accent); color: #fff; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 600; text-align: center; cursor: pointer; text-decoration: none; display: block; width: 100%; transition: background 0.2s; font-size: 0.95rem; }
+    .btn-card-blue:hover { background: var(--accent-hover); }
+    
     .btn-whatsapp-card { background: var(--whatsapp); color: #fff; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 700; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; transition: background 0.2s; font-size: 0.95rem; }
     .btn-whatsapp-card:hover { background: var(--whatsapp-hover); }
 
-    /* Quebra de Objeções */
-    .objections-section { max-width: 1080px; margin: 0 auto 5rem auto; padding: 0 1.5rem; }
-    .objections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-    .objection-box { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1.6rem; }
-    .objection-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; }
-    .objection-box h4 { font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; }
-    .objection-box p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
-
-    /* FAQ */
-    .faq-section { max-width: 860px; margin: 0 auto 5rem auto; padding: 0 1.5rem; }
-    .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; padding: 1.4rem; }
-    .faq-item h4 { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; }
-    .faq-item p { font-size: 0.9rem; color: var(--muted); }
-
-    /* =========================================================================
-       RODAPÉ PADRÃO CORPORATIVO
-       ========================================================================= */
+    /* Rodapé Corporativo */
     footer { background: #0f172a; color: #94a3b8; padding: 3.5rem 1.5rem 2rem 1.5rem; border-top: 1px solid #1e293b; font-size: 0.88rem; }
     .footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2.5rem; margin-bottom: 2.5rem; text-align: left; }
     .footer-col h4 { color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
@@ -175,30 +126,22 @@
     .footer-bottom { border-top: 1px solid #1e293b; padding-top: 1.5rem; text-align: center; font-size: 0.8rem; color: #64748b; max-width: 1100px; margin: 0 auto; }
 
     /* =========================================================================
-       POPUP FIXO DE CONSENTIMENTO LGPD (PARTE INFERIOR)
+       AVISO DE COOKIES (ESTILO DA FIGURA)
        ========================================================================= */
-    .lgpd-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; color: #fff; border-top: 2px solid var(--accent); box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; padding: 1.25rem 2rem; display: none; }
-    .lgpd-content { max-width: 1150px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; }
-    .lgpd-text { flex: 1; min-width: 290px; font-size: 0.88rem; line-height: 1.5; color: #cbd5e1; }
-    .lgpd-text strong { color: #fff; }
-    .lgpd-text a { color: var(--infinite); text-decoration: underline; cursor: pointer; }
-    .lgpd-buttons { display: flex; gap: 0.75rem; align-items: center; }
-    .btn-lgpd-accept { background: var(--infinite); color: #000; border: none; padding: 0.65rem 1.4rem; border-radius: 6px; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: background 0.2s; }
-    .btn-lgpd-accept:hover { background: var(--infinite-dark); }
-    .btn-lgpd-reject { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 0.65rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
-    .btn-lgpd-reject:hover { background: #334155; color: #fff; }
+    .cookie-banner-wrapper { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 760px; z-index: 9999; display: none; }
+    .cookie-card { background: #ffffff; border-radius: 28px; padding: 1.4rem 2rem; box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
+    .cookie-text { font-size: 1.05rem; color: #334155; line-height: 1.5; font-weight: 400; }
+    .cookie-text a { color: #0073e6; text-decoration: none; font-weight: 500; }
+    .cookie-text a:hover { text-decoration: underline; }
+    .btn-cookie-entendi { background: #0073e6; color: #ffffff; border: none; padding: 0.75rem 2.2rem; border-radius: 18px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .btn-cookie-entendi:hover { background: #005bb5; }
 
-    /* BLOQUEIO DE TELA EM CASO DE RECUSA */
-    .lgpd-block-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
-    .lgpd-block-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 2.5rem; max-width: 580px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-    .lgpd-block-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
-    .lgpd-block-card h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.8rem; color: #f87171; }
-    .lgpd-block-card p { font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 1.8rem; }
-    .btn-lgpd-reconsider { background: var(--infinite); color: #000; border: none; padding: 0.85rem 1.8rem; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    @media (max-width: 600px) {
+      .cookie-card { flex-direction: column; align-items: flex-start; border-radius: 20px; padding: 1.2rem; }
+      .btn-cookie-entendi { width: 100%; text-align: center; margin-top: 0.5rem; }
+    }
 
-    /* =========================================================================
-       MODAL DE TERMOS DE USO & POLÍTICA LGPD COMPLETO
-       ========================================================================= */
+    /* Modal de Privacidade */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
     .modal-box { background: #fff; border-radius: 12px; max-width: 800px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; }
     .modal-header { padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
@@ -206,26 +149,26 @@
     .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted); font-weight: bold; }
     .modal-body { padding: 1.75rem; overflow-y: auto; font-size: 0.9rem; color: #334155; line-height: 1.65; }
     .modal-body h4 { font-size: 1rem; font-weight: 700; color: var(--primary); margin: 1.2rem 0 0.4rem 0; }
-    .modal-body .badge-no-sale { background: #ecfdf5; border-left: 4px solid var(--success); padding: 0.75rem 1rem; border-radius: 4px; font-weight: 600; color: #166534; margin: 1rem 0; }
     .modal-footer { padding: 1rem 1.75rem; border-top: 1px solid var(--border); background: #f8fafc; text-align: right; }
   </style>
 </head>
 <body>
 
-  <!-- Barra Superior -->
+  <!-- Barra Superior com 'PJe-Calc Assessoria' na linha de baixo -->
   <header>
-    <div class="brand">Dr. André Calazans <span>| PJe-Calc Assessoria</span></div>
+    <div class="brand-container">
+      <div class="brand-title">Dr. André Calazans</div>
+      <div class="brand-subtitle">PJe-Calc Assessoria</div>
+    </div>
     <button class="btn-header" onclick="focarLogin()">Acessar Plataforma</button>
   </header>
 
   <main>
-    <!-- Seção Principal de Apresentação -->
     <section class="hero">
       <div class="badge-hero">⚖️ Rigor Pericial & Sistema Oficial PJe-Calc</div>
       <h1>Cálculos Trabalhistas com Precisão e <span>Liquidação em até 12x</span></h1>
       <p>Elimine o risco de sucumbência recíproca indevida e tenha laudos sólidos para instruir petições iniciais, liquidações ou impugnações. Fornecimento do <strong>arquivo nativo editável (.PJC)</strong> incluso em todas as entregas.</p>
 
-      <!-- Caixa de Acesso Rápido -->
       <div class="auth-box" id="authBox">
         <h2>Área do Advogado</h2>
         <p>Acesse com sua Conta Google para solicitar laudos, consultar a esteira em tempo real ou repassar links de pagamento.</p>
@@ -242,7 +185,7 @@
       </div>
     </section>
 
-    <!-- Destaque de Pagamento e Repasse via InfinitePay -->
+    <!-- Destaque InfinitePay -->
     <section class="split-banner">
       <div class="split-text">
         <h3>Sem desembolso do escritório: liquide em até <span>12x no cartão</span> ou repasse ao cliente</h3>
@@ -251,14 +194,14 @@
       <div class="badge-infinite">⚡ Powered by InfinitePay</div>
     </section>
 
-    <!-- Tabela de Valores Comerciais -->
+    <!-- Tabela de Preços -->
     <section class="pricing-section">
       <h2 class="section-title">Valores Transparentes e Acessíveis</h2>
       <p class="section-subtitle">Honorários técnicos competitivos, pensados para o fluxo de caixa do escritório e com arquivo .PJC editável garantido.</p>
 
       <div class="pricing-grid">
         
-        <!-- Card 1: Cálculo Inicial (R$ 200) -->
+        <!-- Card 1: Cálculo Inicial -->
         <div class="pricing-card">
           <div>
             <div class="card-service-title">Cálculo Inicial (Art. 840 CLT)</div>
@@ -277,10 +220,10 @@
               <li>Entrega ágil com prioridade de protocolo</li>
             </ul>
           </div>
-          <button class="btn-card" onclick="focarLogin()">Protocolar Inicial</button>
+          <button class="btn-card-blue" onclick="focarLogin()">Solicitar cálculo</button>
         </div>
 
-        <!-- Card 2: Cálculo Final / Liquidação (R$ 300) -->
+        <!-- Card 2: Cálculo Final -->
         <div class="pricing-card featured">
           <span class="badge-popular">Mais Demandado</span>
           <div>
@@ -301,10 +244,10 @@
               <li>Apuração de INSS patronal, segurado e IRPF</li>
             </ul>
           </div>
-          <button class="btn-card" onclick="focarLogin()">Solicitar Cálculo Final</button>
+          <button class="btn-card-blue" onclick="focarLogin()">Solicitar cálculo</button>
         </div>
 
-        <!-- Card 3: Laudos e Perícias (WhatsApp) -->
+        <!-- Card 3: Laudos e Perícias -->
         <div class="pricing-card">
           <div>
             <div class="card-service-title">Laudos & Perícias Judiciais</div>
@@ -330,62 +273,9 @@
 
       </div>
     </section>
-
-    <!-- Seção Anti-Objeções -->
-    <section class="objections-section">
-      <h2 class="section-title" style="text-align: center; margin-bottom: 2.5rem;">Por que escritórios terceirizam conosco?</h2>
-      
-      <div class="objections-grid">
-        <div class="objection-box">
-          <span class="objection-icon">🎯</span>
-          <h4>Arquivo .PJC 100% Auditável</h4>
-          <p>Você não recebe apenas uma tabela estática em PDF. Você recebe o arquivo de exportação do sistema PJe-Calc para conferir qualquer fórmula e anexar aos autos com credibilidade máxima.</p>
-        </div>
-
-        <div class="objection-box">
-          <span class="objection-icon">🛡️</span>
-          <h4>Fim do Risco de Sucumbência</h4>
-          <p>Calculamos os reflexos com fundamentação contábil para blindar seu escritório de pedidos inflados que podem acarretar condenação em honorários sucumbenciais para o autor.</p>
-        </div>
-
-        <div class="objection-box">
-          <span class="objection-icon">⏱️</span>
-          <h4>Prazo Fatal Cumprido à Risca</h4>
-          <p>Nossa esteira operacional organiza os processos por ordem rigorosa de urgência judicial. Trabalhamos com prazo ágil para que você protocole sem correria de última hora.</p>
-        </div>
-
-        <div class="objection-box">
-          <span class="objection-icon">💬</span>
-          <h4>Alinhamento Técnico no Fórum</h4>
-          <p>Dúvidas sobre reflexos em DSR, divisor de horas ou base de insalubridade? Nossa plataforma possui chat técnico por processo direto com o perito responsável.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Perguntas Frequentes / FAQ -->
-    <section class="faq-section">
-      <h2 class="section-title" style="text-align: center; margin-bottom: 2rem;">Perguntas Frequentes dos Escritórios</h2>
-      
-      <div class="faq-item">
-        <h4>1. Como repassar o pagamento parcelado em 12x para o cliente?</h4>
-        <p>Assim que o cálculo for orçado no painel, haverá um botão para abrir o WhatsApp com mensagem já preenchida e o link oficial da InfinitePay com o número do processo. Seu cliente pode pagar em até 12x no cartão ou via Pix.</p>
-      </div>
-
-      <div class="faq-item">
-        <h4>2. Como é entregue o cálculo final?</h4>
-        <p>Você faz o download direto na sua área do cliente de dois arquivos principais: o laudo em PDF com memória discriminada de cálculo e o arquivo nativo de importação do PJe-Calc (extensão .pjc).</p>
-      </div>
-
-      <div class="faq-item">
-        <h4>3. Como funciona a contratação de laudos e perícias complexas?</h4>
-        <p>Para impugnações de cálculos, contestações de perícias do juízo ou casos com múltiplos reclamantes e cartões complexos, basta clicar no botão de WhatsApp. Analisamos as peças e fornecemos uma proposta sob medida.</p>
-      </div>
-    </section>
   </main>
 
-  <!-- =========================================================================
-       RODAPÉ PADRÃO CORPORATIVO
-       ========================================================================= -->
+  <!-- Rodapé -->
   <footer>
     <div class="footer-container">
       <div class="footer-col">
@@ -407,9 +297,8 @@
       <div class="footer-col">
         <h4>Segurança & Privacidade</h4>
         <ul class="footer-links">
-          <li><a href="javascript:void(0)" onclick="abrirModalLGPD()">Termos de Uso & Política LGPD</a></li>
-          <li><a href="javascript:void(0)" onclick="abrirModalLGPD()">Cláusula de Sigilo & Não Venda de Dados</a></li>
-          <li><a href="javascript:void(0)" onclick="abrirModalLGPD()">Criptografia AES-256 e Armazenamento</a></li>
+          <li><a href="javascript:void(0)" onclick="abrirModalPrivacidade()">Política de Privacidade</a></li>
+          <li><a href="javascript:void(0)" onclick="abrirModalPrivacidade()">Segurança & Criptografia AES-256</a></li>
         </ul>
       </div>
 
@@ -423,125 +312,67 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2026 Dr. André Oliveira Calazans. Todos os direitos reservados. Plataforma protegida em estrita conformidade com a Lei Federal nº 13.709/2018 (LGPD).</p>
+      <p>&copy; 2026 Dr. André Oliveira Calazans. Todos os direitos reservados.</p>
     </div>
   </footer>
 
   <!-- =========================================================================
-       POPUP FIXO DE CONSENTIMENTO LGPD (PARTE INFERIOR)
+       AVISO DE COOKIES (MODELO DA IMAGEM)
        ========================================================================= -->
-  <div id="lgpdBanner" class="lgpd-banner">
-    <div class="lgpd-content">
-      <div class="lgpd-text">
-        🔒 <strong>Privacidade & Sigilo Profissional (LGPD):</strong> Devido à natureza técnica e jurídica dos serviços prestados (processamento de peças processuais, contracheques e autos judiciais), utilizamos cookies estritamente necessários e coletamos dados cadastrais sob criptografia para viabilizar os cálculos. <strong>Não realizamos venda nem compartilhamento comercial de dados.</strong> Saiba mais no nosso <a onclick="abrirModalLGPD()">Termo de Uso e Política de Dados</a>.
+  <div id="cookieBanner" class="cookie-banner-wrapper">
+    <div class="cookie-card">
+      <div class="cookie-text">
+        Usamos cookies para melhorar sua experiência.<br>
+        Ao continuar, você concorda com nossa <a href="javascript:void(0)" onclick="abrirModalPrivacidade()">Política de Privacidade</a>.
       </div>
-      <div class="lgpd-buttons">
-        <button class="btn-lgpd-accept" onclick="aceitarLGPD()">Aceitar e Continuar</button>
-        <button class="btn-lgpd-reject" onclick="recusarLGPD()">Recusar</button>
-      </div>
+      <button class="btn-cookie-entendi" onclick="aceitarCookies()">Entendi</button>
     </div>
   </div>
 
-  <!-- BLOQUEIO DE TELA EM CASO DE RECUSA -->
-  <div id="lgpdBlockOverlay" class="lgpd-block-overlay">
-    <div class="lgpd-block-card">
-      <span class="lgpd-block-icon">⚠️</span>
-      <h3>Consentimento Necessário</h3>
-      <p>
-        Por conta da <strong>natureza estrita dos serviços periciais e jurídicos</strong> ofertados por esta plataforma (cálculos do PJe-Calc, custódia de peças processuais, verificação de sentenças e emissão de cobranças), o tratamento seguro de seus dados de autenticação e dos autos judiciais é <strong>estritamente indispensável</strong> para a execução dos contratos e cumprimento de obrigações legais.
-      </p>
-      <p style="font-size: 0.88rem; color: #94a3b8; margin-top: -0.8rem;">
-        Reiteramos nosso compromisso formal de que seus dados <strong>jamais serão vendidos, alugados ou compartilhados</strong> para fins de marketing ou terceiros.
-      </p>
-      <button class="btn-lgpd-reconsider" onclick="aceitarLGPD()">Concordar e Acessar a Plataforma</button>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL DE TERMOS DE USO & POLÍTICA LGPD COMPLETO
-       ========================================================================= -->
-  <div id="modalLGPD" class="modal-overlay">
+  <!-- Modal Política de Privacidade -->
+  <div id="modalPrivacidade" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>Termos de Uso e Política de Privacidade (LGPD)</h3>
-        <button class="modal-close" onclick="fecharModalLGPD()">&times;</button>
+        <h3>Política de Privacidade & Cookies</h3>
+        <button class="modal-close" onclick="fecharModalPrivacidade()">&times;</button>
       </div>
       <div class="modal-body">
-        <p><strong>Última atualização:</strong> Setembro de 2026</p>
-        <p>Estes Termos de Uso e Política de Privacidade regulam o acesso e utilização da plataforma digital mantida por <strong>Dr. André Oliveira Calazans</strong>, estabelecendo as diretrizes para tratamento de dados sob a Lei Federal nº 13.709/2018 (Lei Geral de Proteção de Dados - LGPD).</p>
-
-        <div class="badge-no-sale">
-          🛡️ <strong>COMPROMISSO EXPRESSO DE NÃO VENDA DE DADOS:</strong> Em nenhuma hipótese dados pessoais, dados de clientes, petições, sentenças ou arquivos judiciais serão vendidos, cedidos, alugados, monetizados ou transferidos onerosamente a qualquer terceiro.
-        </div>
-
-        <h4>1. Natureza do Serviço e Necessidade de Tratamento</h4>
-        <p>A presente plataforma tem por finalidade exclusiva a assessoria pericial contábil, cálculos no sistema oficial PJe-Calc da Justiça do Trabalho, elaboração de estimativas iniciais (Art. 840 CLT), liquidações de sentença e pareceres técnicos de impugnação. Pela própria natureza dos serviços, é mandatório o upload de peças judiciais (sentenças, acórdãos, contracheques, cartões de ponto e arquivos .pjc), justificando-se o tratamento nos termos do Art. 7º, incisos V (execução de contrato) e IX (legítimo interesse) da LGPD.</p>
-
-        <h4>2. Dados Coletados</h4>
-        <p>• <strong>Dados Cadastrais do Advogado:</strong> Nome, e-mail de autenticação Google OAuth e telefone WhatsApp.<br>
-        • <strong>Dados Processuais:</strong> Número único de processo CNJ, parâmetros técnicos, peças anexadas e prazos fatais informados.<br>
-        • <strong>Dados Financeiros:</strong> Confirmação de status de liquidação via gateway oficial InfinitePay (não armazenamos dados de cartão de crédito no nosso servidor).</p>
-
-        <h4>3. Segurança e Criptografia (AES-256)</h4>
-        <p>Todos os arquivos inseridos na plataforma são alocados em infraestrutura de nuvem segura com buckets privados e criptografia em trânsito (HTTPS / TLS 1.3) e em repouso (AES-256). Os links de visualização são temporários e com expiração programada, acessíveis somente pelo perito responsável e pelo respectivo advogado solicitante mediante controle estrito de permissão a nível de linha (Row Level Security - RLS).</p>
-
-        <h4>4. Eliminação e Retenção de Documentos</h4>
-        <p>As peças processuais fornecidas serão mantidas pelo período estritamente necessário para elaboração do laudo e eventual suporte a esclarecimentos. Concluída a entrega do cálculo e superado o prazo recursal correlato, os arquivos poderão ser descartados de forma segura mediante requisição do titular.</p>
-
-        <h4>5. Direitos do Titular</h4>
-        <p>O usuário pode, a qualquer momento, solicitar a confirmação da existência de tratamento, a retificação de dados incompletos ou a revogação de seu consentimento, contatando diretamente o encarregado pelo e-mail: <strong>andreoliveiracalazans@gmail.com</strong>.</p>
+        <p>Utilizamos cookies essenciais para autenticação e funcionamento seguro da plataforma pericial. Não realizamos venda ou compartilhamento comercial de dados com terceiros. Todos os documentos processuais recebidos são custodiados sob criptografia (AES-256) exclusivamente para elaboração dos laudos técnicos contratados.</p>
       </div>
       <div class="modal-footer">
-        <button class="btn-card" style="display: inline-block; width: auto; padding: 0.6rem 1.4rem;" onclick="fecharModalLGPD()">Fechar Termo</button>
+        <button class="btn-card-blue" style="width: auto; padding: 0.6rem 1.5rem;" onclick="fecharModalPrivacidade()">Fechar</button>
       </div>
     </div>
   </div>
 
   <script>
-    // =========================================================================
-    // CONFIGURAÇÕES SUPABASE
-    // =========================================================================
     const SUPABASE_URL = "SUA_SUPABASE_URL";
     const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
     const ADMIN_EMAIL = "andreoliveiracalazans@gmail.com";
 
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // =========================================================================
-    // CONTROLE LGPD & CONSENTIMENTO
-    // =========================================================================
-    function checarConsentimentoLGPD() {
-      const consentimento = localStorage.getItem('lgpd_consentimento_calazans');
+    // Controle do Banner de Cookies
+    function checarCookies() {
+      const consentimento = localStorage.getItem('cookies_aceito_calazans');
       if (!consentimento) {
-        document.getElementById('lgpdBanner').style.display = 'block';
-      } else if (consentimento === 'rejeitado') {
-        document.getElementById('lgpdBlockOverlay').style.display = 'flex';
+        document.getElementById('cookieBanner').style.display = 'block';
       }
     }
 
-    function aceitarLGPD() {
-      localStorage.setItem('lgpd_consentimento_calazans', 'aceito');
-      document.getElementById('lgpdBanner').style.display = 'none';
-      document.getElementById('lgpdBlockOverlay').style.display = 'none';
+    function aceitarCookies() {
+      localStorage.setItem('cookies_aceito_calazans', 'true');
+      document.getElementById('cookieBanner').style.display = 'none';
     }
 
-    function recusarLGPD() {
-      localStorage.setItem('lgpd_consentimento_calazans', 'rejeitado');
-      document.getElementById('lgpdBanner').style.display = 'none';
-      document.getElementById('lgpdBlockOverlay').style.display = 'flex';
+    function abrirModalPrivacidade() {
+      document.getElementById('modalPrivacidade').style.display = 'flex';
     }
 
-    function abrirModalLGPD() {
-      document.getElementById('modalLGPD').style.display = 'flex';
+    function fecharModalPrivacidade() {
+      document.getElementById('modalPrivacidade').style.display = 'none';
     }
 
-    function fecharModalLGPD() {
-      document.getElementById('modalLGPD').style.display = 'none';
-    }
-
-    // =========================================================================
-    // AUTENTICAÇÃO E ROTEAMENTO
-    // =========================================================================
     async function verificarSessao() {
       const { data: { session } } = await client.auth.getSession();
       if (session) {
@@ -554,11 +385,7 @@
     }
 
     async function loginGoogle() {
-      // Se não aceitou a LGPD, exibe o aviso
-      if (localStorage.getItem('lgpd_consentimento_calazans') !== 'aceito') {
-        aceitarLGPD();
-      }
-
+      aceitarCookies();
       const { error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -572,8 +399,7 @@
       document.getElementById('authBox').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Inicialização ao carregar a página
-    checarConsentimentoLGPD();
+    checarCookies();
     verificarSessao();
   </script>
 </body>
