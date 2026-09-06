@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Pedido de Cálculo | Dr. André Calazans</title>
+  
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border: #cbd5e1;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #16a34a;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 3rem; }
+
+    /* Barra Superior */
+    header { background: var(--primary); color: #fff; padding: 1.1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px; }
+    .brand span { color: #94a3b8; font-weight: 400; font-size: 0.9rem; }
+    .nav-links a { color: #e2e8f0; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-left: 1.2rem; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* Container do Formulário */
+    .container { max-width: 680px; margin: 2.5rem auto; padding: 0 1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2.2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+    .header-card h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 0.3rem; }
+    .header-card p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+
+    .security-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--success); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1.8rem; }
+
+    /* Campos do Formulário */
+    .form-group { margin-bottom: 1.4rem; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .form-group label .required { color: var(--danger); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.75rem 0.9rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.95rem; color: var(--text); background: #fff; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+    .form-help { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
+
+    /* Área de Upload */
+    .upload-area { border: 2px dashed #94a3b8; border-radius: 8px; padding: 1.6rem 1rem; text-align: center; background: #f8fafc; cursor: pointer; transition: background 0.2s, border-color 0.2s; position: relative; }
+    .upload-area:hover { background: #f1f5f9; border-color: var(--accent); }
+    .upload-area input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+    .upload-text { font-size: 0.9rem; font-weight: 600; color: var(--primary); }
+    .upload-subtext { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    .file-selected-name { margin-top: 0.8rem; font-size: 0.85rem; font-weight: 600; color: var(--accent); display: none; word-break: break-all; }
+
+    /* Botões */
+    .btn-submit { background: var(--accent); color: #fff; border: none; padding: 0.9rem 1.4rem; border-radius: 6px; font-weight: 600; font-size: 1rem; width: 100%; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .btn-submit:hover { background: var(--accent-hover); }
+    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    .btn-cancel { display: block; text-align: center; margin-top: 1.2rem; color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .btn-cancel:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Dr. André Calazans <span>| PJe-Calc Assessoria</span></div>
+    <nav class="nav-links">
+      <a href="meus-pedidos.html">Meus Processos</a>
+      <a href="#" onclick="fazerLogout()">Sair</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="header-card">
+        <h2>Cadastrar Demanda Pericial</h2>
+        <p>Preencha os parâmetros e anexe os documentos necessários para elaboração do laudo.</p>
+      </div>
+
+      <div class="security-badge">
+        🔒 Conexão Segura & Armazenamento em Repouso Criptografado (AES-256)
+      </div>
+
+      <form id="formNovoPedido" onsubmit="submeterDemanda(event)">
+        <!-- Número dos Autos -->
+        <div class="form-group">
+          <label for="numero_processo">Número dos Autos (PJe / CNJ) <span class="required">*</span></label>
+          <input type="text" id="numero_processo" required placeholder="Ex: 0100234-56.2026.5.01.0001" oninput="marcarModificado()">
+          <span class="form-help">Informe a numeração única para identificação do cálculo.</span>
+        </div>
+
+        <!-- WhatsApp com DDD -->
+        <div class="form-group">
+          <label for="cliente_whatsapp">Seu WhatsApp de Notificação <span class="required">*</span></label>
+          <input type="tel" id="cliente_whatsapp" required placeholder="Ex: 21999998888" oninput="marcarModificado()">
+          <span class="form-help">Utilizado para avisos do status e link de 12x via Meta Business.</span>
+        </div>
+
+        <!-- Tipo do Laudo / Serviço -->
+        <div class="form-group">
+          <label for="tipo_servico">Objeto da Perícia / Tipo de Cálculo <span class="required">*</span></label>
+          <select id="tipo_servico" required onchange="marcarModificado()">
+            <option value="" disabled selected>Selecione a modalidade...</option>
+            <option value="Liquidação de Sentença">Liquidação de Sentença (Acórdão / Transitado)</option>
+            <option value="Estimativa Inicial (Art. 840 CLT)">Estimativa Inicial de Valores (Art. 840 da CLT)</option>
+            <option value="Impugnação de Cálculos">Impugnação aos Cálculos / Parecer Técnico</option>
+            <option value="Atualização Monetária (ADC 58 / OJ 394)">Atualização de Laudo Anterior (ADC 58 / OJ 394)</option>
+          </select>
+        </div>
+
+        <!-- Prazo Fatal -->
+        <div class="form-group">
+          <label for="prazo_fatal">Prazo Fatal para Protocolo <span class="required">*</span></label>
+          <input type="date" id="prazo_fatal" required onchange="marcarModificado()">
+          <span class="form-help">A esteira prioriza a execução com base nesta data limite.</span>
+        </div>
+
+        <!-- Upload de Arquivos -->
+        <div class="form-group">
+          <label>Documentos / Sentença / Arquivo PJe-Calc (.pjc, .pdf, .zip, .xlsx)</label>
+          <div class="upload-area">
+            <span class="upload-icon">📄</span>
+            <div class="upload-text">Clique ou arraste o arquivo aqui</div>
+            <div class="upload-subtext">Aceita PDF, PJC nativo, ZIP, RAR ou Excel (até 50MB)</div>
+            <input type="file" id="arquivo_processo" accept=".pdf,.pjc,.zip,.rar,.xlsx,.xls,.doc,.docx" onchange="arquivoSelecionado(this)">
+            <div id="fileNameDisplay" class="file-selected-name"></div>
+          </div>
+          <span class="form-help">Pode anexar sentença, acórdão, cartões de ponto ou o arquivo .pjc base em lote compactado.</span>
+        </div>
+
+        <!-- Observações / Teses Específicas -->
+        <div class="form-group">
+          <label for="observacoes">Observações Técnicas e Particularidades</label>
+          <textarea id="observacoes" rows="3" placeholder="Ex: Observar aplicação de divisor 200, reflexos em RSR conforme modulação do TST, base de cálculo de insalubridade no salário-mínimo..." oninput="marcarModificado()"></textarea>
+          <span class="form-help">Destaque pontos controvertidos para fundamentação do perito.</span>
+        </div>
+
+        <button type="submit" id="btnSubmeter" class="btn-submit">
+          <span>Protocolar Demanda Pericial</span>
+        </button>
+        <a href="meus-pedidos.html" class="btn-cancel" onclick="desmarcarModificado()">Cancelar e voltar para meus processos</a>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // =========================================================================
+    // CONFIGURAÇÕES SUPABASE
+    // =========================================================================
+    const SUPABASE_URL = "SUA_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let usuarioAtual = null;
+    let formularioModificado = false;
+
+    // Prevenção de saída acidental (caso o usuário clique em voltar sem querer)
+    window.addEventListener('beforeunload', (e) => {
+      if (formularioModificado) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    function marcarModificado() {
+      formularioModificado = true;
+    }
+
+    function desmarcarModificado() {
+      formularioModificado = false;
+    }
+
+    // Exibição do nome do arquivo selecionado
+    function arquivoSelecionado(input) {
+      marcarModificado();
+      const display = document.getElementById('fileNameDisplay');
+      if (input.files && input.files[0]) {
+        display.style.display = 'block';
+        display.innerText = "📎 Arquivo anexado: " + input.files[0].name;
+      } else {
+        display.style.display = 'none';
+        display.innerText = "";
+      }
+    }
+
+    // Autenticação Obrigatória
+    async function verificarAutenticacao() {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) {
+        window.location.href = "index.html";
+        return;
+      }
+      usuarioAtual = session.user;
+    }
+
+    // Envio do Pedido e Upload Seguro
+    async function submeterDemanda(event) {
+      event.preventDefault();
+
+      const btn = document.getElementById('btnSubmeter');
+      btn.disabled = true;
+      btn.innerHTML = `<span>Criptografando e enviando documentos...</span>`;
+
+      try {
+        let caminhoStorage = null;
+        const inputArquivo = document.getElementById('arquivo_processo');
+        const arquivo = inputArquivo.files[0];
+
+        // 1. Upload do Arquivo no Supabase Storage se houver anexo
+        if (arquivo) {
+          const extensao = arquivo.name.split('.').pop();
+          const timestamp = Date.now();
+          const hashAleatorio = Math.random().toString(36).substring(2, 9);
+          // Salva na pasta do usuário para validação das regras de RLS
+          const nomeFinalStorage = `${usuarioAtual.id}/${timestamp}_${hashAleatorio}.${extensao}`;
+
+          const { data: uploadData, error: uploadError } = await client.storage
+            .from('documentos_processos')
+            .upload(nomeFinalStorage, arquivo, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            throw new Error("Falha no upload seguro do arquivo: " + uploadError.message);
+          }
+
+          caminhoStorage = uploadData.path;
+        }
+
+        // 2. Gravação do Registro na Tabela pedidos_calculos
+        const { error: dbError } = await client.from('pedidos_calculos').insert([{
+          user_id: usuarioAtual.id,
+          cliente_email: usuarioAtual.email,
+          cliente_whatsapp: document.getElementById('cliente_whatsapp').value.trim(),
+          numero_processo: document.getElementById('numero_processo').value.trim(),
+          tipo_servico: document.getElementById('tipo_servico').value,
+          prazo_fatal: document.getElementById('prazo_fatal').value,
+          observacoes: document.getElementById('observacoes').value.trim(),
+          caminho_arquivo: caminhoStorage,
+          status: 'solicitado'
+        }]);
+
+        if (dbError) {
+          throw new Error("Erro ao registrar o processo no banco: " + dbError.message);
+        }
+
+        // 3. Sucesso: Desativa o alerta de saída e redireciona
+        desmarcarModificado();
+        alert("Demanda pericial cadastrada com sucesso!");
+        window.location.href = "meus-pedidos.html";
+
+      } catch (erro) {
+        alert(erro.message);
+        btn.disabled = false;
+        btn.innerHTML = `<span>Protocolar Demanda Pericial</span>`;
+      }
+    }
+
+    async function fazerLogout() {
+      desmarcarModificado();
+      await client.auth.signOut();
+      window.location.href = "index.html";
+    }
+
+    verificarAutenticacao();
+  </script>
+</body>
+</html>

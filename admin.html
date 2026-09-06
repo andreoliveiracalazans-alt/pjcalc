@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Master Geral | Dr. André Calazans</title>
+
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="whatsappService.js"></script>
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --infinite: #00e599;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 5rem; }
+
+    /* Barra Superior */
+    header { background: var(--primary); color: #fff; padding: 1.1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.5px; }
+    .brand span { color: var(--infinite); font-weight: 400; font-size: 0.9rem; }
+    
+    .btn-action { background: var(--accent); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 6px; font-weight: 600; text-decoration: none; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem; transition: background 0.2s; }
+    .btn-action:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-infinite { background: #000; color: var(--infinite); border: 1px solid var(--infinite); font-weight: 700; }
+    .btn-infinite:hover { background: #111; }
+    .btn-success { background: var(--success); }
+    .btn-success:hover { background: #15803d; }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #dc2626; }
+
+    .container { max-width: 1240px; margin: 2.5rem auto; padding: 0 1rem; }
+
+    /* Métricas Master */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+    .metric-card { background: var(--card-bg); padding: 1.4rem; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .metric-title { font-size: 0.8rem; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: 0.5px; }
+    .metric-value { font-size: 1.9rem; font-weight: 800; color: var(--primary); margin-top: 0.35rem; }
+
+    /* Barra de Filtros Rápidos */
+    .filter-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.8rem; align-items: center; }
+    .filter-btn { padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--text); transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--accent); }
+    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Itens de Pedido / Processos */
+    .pedido-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.6rem; margin-bottom: 1.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: border-color 0.2s; }
+    .pedido-item.urgente { border-left: 6px solid var(--danger); background: #fffafb; }
+    
+    .pedido-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.8rem; }
+    .processo-titulo { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+    .badge-status { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 6px; background: #e2e8f0; color: var(--primary); text-transform: uppercase; }
+    .badge-urgente { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
+
+    .info-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+    .info-sub strong { color: var(--text); }
+
+    /* Faixa de Ações Operacionais (Cobrança, Drive, Entrega) */
+    .action-strip { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-top: 1.2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+    .input-inline { padding: 0.55rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.88rem; }
+    .input-inline:focus { outline: none; border-color: var(--accent); }
+
+    /* Fórum de Alinhamento Técnico */
+    .forum-section { margin-top: 1.4rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .forum-title { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.6rem; }
+    .chat-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .chat-bubble { font-size: 0.85rem; padding: 0.55rem 0.85rem; border-radius: 8px; max-width: 85%; line-height: 1.4; }
+    .chat-perito { background: #dbeafe; color: #1e40af; align-self: flex-start; }
+    .chat-advogado { background: #e2e8f0; color: var(--text); align-self: flex-end; }
+    .chat-input-row { display: flex; gap: 0.5rem; }
+    .chat-input-row input { flex: 1; padding: 0.55rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Topo Master -->
+  <header>
+    <div class="brand">Dr. André Calazans <span>| Painel Master do Perito</span></div>
+    <div style="display: flex; gap: 0.6rem; align-items: center;">
+      <span style="font-size: 0.85rem; color: #94a3b8;" id="adminEmailBadge"></span>
+      <button class="btn-action btn-secondary" onclick="fazerLogout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Dashboard de Métricas -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">Demandas Urgentes (≤ 48h)</div>
+        <div class="metric-value" id="m_urgentes" style="color: var(--danger);">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Cálculos em Execução</div>
+        <div class="metric-value" id="m_execucao" style="color: var(--accent);">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Aguardando Pagamento</div>
+        <div class="metric-value" id="m_aguardando" style="color: var(--warning);">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Faturamento Total Realizado</div>
+        <div class="metric-value" id="m_faturamento" style="color: var(--success);">R$ 0,00</div>
+      </div>
+    </section>
+
+    <!-- Barra de Filtros Rápidos -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filtrarProcessos('todos')">Todos os Processos</button>
+      <button class="filter-btn" onclick="filtrarProcessos('urgentes')">🚨 Prioridade Fatal</button>
+      <button class="filter-btn" onclick="filtrarProcessos('aguardando_pagamento')">Aguardando Pagamento</button>
+      <button class="filter-btn" onclick="filtrarProcessos('pagamento_realizado')">Pagos / Na Fila</button>
+      <button class="filter-btn" onclick="filtrarProcessos('em_elaboracao')">Em Elaboração</button>
+      <button class="filter-btn" onclick="filtrarProcessos('entregue')">Entregues</button>
+    </div>
+
+    <!-- Lista de Processos Master -->
+    <div id="listaGeralProcessos">
+      <p style="color: var(--muted);">Carregando esteira geral de processos...</p>
+    </div>
+  </main>
+
+  <script>
+    // =========================================================================
+    // CONFIGURAÇÕES DO SISTEMA
+    // =========================================================================
+    const SUPABASE_URL = "SUA_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
+    const INFINITEPAY_HANDLE = "SEU_HANDLE_INFINITEPAY"; 
+    const ADMIN_EMAIL = "andreoliveiracalazans@gmail.com";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let cachePedidosAdmin = [];
+
+    // Verificação de Segurança (Apenas Dr. André pode acessar)
+    async function verificarAcessoAdmin() {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session || session.user.email !== ADMIN_EMAIL) {
+        alert("Acesso restrito ao Administrador.");
+        window.location.href = "index.html";
+        return;
+      }
+      document.getElementById('adminEmailBadge').innerText = session.user.email;
+      await carregarDadosMaster();
+    }
+
+    // Carregamento Geral (Ordenado pelo prazo fatal mais próximo)
+    async function carregarDadosMaster() {
+      const { data: pedidos, error } = await client
+        .from('pedidos_calculos')
+        .select('*')
+        .order('prazo_fatal', { ascending: true });
+
+      if (error) {
+        document.getElementById('listaGeralProcessos').innerHTML = `<p style="color:var(--danger)">Erro: ${error.message}</p>`;
+        return;
+      }
+
+      cachePedidosAdmin = pedidos || [];
+      atualizarMetricas(cachePedidosAdmin);
+      renderizarLista(cachePedidosAdmin);
+    }
+
+    // Atualização dos 4 Cards Superiores
+    function atualizarMetricas(lista) {
+      const hoje = new Date();
+      const limiteUrgente = new Date();
+      limiteUrgente.setHours(hoje.getHours() + 48);
+
+      const urgentes = lista.filter(p => {
+        if (p.status === 'entregue') return false;
+        const prazo = new Date(p.prazo_fatal + "T23:59:59");
+        return prazo <= limiteUrgente;
+      });
+
+      const execucao = lista.filter(p => ['pagamento_realizado', 'na_fila_de_calculos', 'em_elaboracao'].includes(p.status));
+      const aguardando = lista.filter(p => p.status === 'aguardando_pagamento');
+      const faturamento = lista.filter(p => p.pago_em).reduce((acc, p) => acc + (parseFloat(p.valor) || 0), 0);
+
+      document.getElementById('m_urgentes').innerText = urgentes.length;
+      document.getElementById('m_execucao').innerText = execucao.length;
+      document.getElementById('m_aguardando').innerText = aguardando.length;
+      document.getElementById('m_faturamento').innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Filtragem Rápida
+    function filtrarProcessos(tipo) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (tipo === 'todos') return renderizarLista(cachePedidosAdmin);
+
+      if (tipo === 'urgentes') {
+        const hoje = new Date();
+        const limiteUrgente = new Date();
+        limiteUrgente.setHours(hoje.getHours() + 48);
+
+        const filtrados = cachePedidosAdmin.filter(p => {
+          if (p.status === 'entregue') return false;
+          const prazo = new Date(p.prazo_fatal + "T23:59:59");
+          return prazo <= limiteUrgente;
+        });
+        return renderizarLista(filtrados);
+      }
+
+      const filtrados = cachePedidosAdmin.filter(p => p.status === tipo);
+      renderizarLista(filtrados);
+    }
+
+    // Renderização dos Processos
+    function renderizarLista(lista) {
+      const container = document.getElementById('listaGeralProcessos');
+      if (lista.length === 0) {
+        container.innerHTML = `<div style="background:#fff; padding:3rem; text-align:center; border-radius:8px; border:1px solid var(--border);">Nenhum processo localizado neste filtro.</div>`;
+        return;
+      }
+
+      const hoje = new Date();
+      const limiteUrgente = new Date();
+      limiteUrgente.setHours(hoje.getHours() + 48);
+
+      container.innerHTML = lista.map(p => {
+        const prazoDate = new Date(p.prazo_fatal + "T23:59:59");
+        const ehUrgente = p.status !== 'entregue' && prazoDate <= limiteUrgente;
+        const dataFormatada = p.prazo_fatal ? p.prazo_fatal.split('-').reverse().join('/') : 'Não informado';
+
+        return `
+          <div class="pedido-item ${ehUrgente ? 'urgente' : ''}" id="card_${p.id}">
+            <div class="pedido-header">
+              <div>
+                <div class="processo-titulo">${p.numero_processo} <span style="font-size:0.9rem; font-weight:600; color:var(--accent);">(${p.tipo_servico})</span></div>
+                <div class="info-sub">
+                  Advogado: <strong>${p.cliente_email}</strong> | WhatsApp: <strong>${p.cliente_whatsapp || 'Não cadastrado'}</strong> | Prazo Fatal: <strong style="${ehUrgente ? 'color:var(--danger);' : ''}">${dataFormatada}</strong>
+                </div>
+                ${p.observacoes ? `<div class="info-sub" style="margin-top:0.4rem; background:#f1f5f9; padding:0.4rem 0.6rem; border-radius:4px;"><strong>Obs do Colega:</strong> ${p.observacoes}</div>` : ''}
+              </div>
+              <span class="badge-status ${ehUrgente ? 'badge-urgente' : ''}">${p.status.replace(/_/g, ' ')}</span>
+            </div>
+
+            <!-- Faixa Operacional do Dr. André -->
+            <div class="action-strip">
+              ${p.caminho_arquivo ? `
+                <button class="btn-action btn-secondary" onclick="baixarArquivoSeguro('${p.caminho_arquivo}')">
+                  📥 Baixar Peças / Anexos
+                </button>
+              ` : '<span style="font-size:0.8rem; color:var(--muted);">Sem anexo enviado</span>'}
+
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <input type="number" id="valor_${p.id}" value="${p.valor || ''}" placeholder="Valor (R$)" step="0.01" class="input-inline" style="width:120px;">
+                <button class="btn-action btn-infinite" onclick="gerarCobrancaInfinitePay('${p.id}')">
+                  ⚡ Gerar Cobrança (12x)
+                </button>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:0.4rem; flex:1; min-width:280px;">
+                <input type="text" id="drive_${p.id}" value="${p.link_drive || ''}" placeholder="Link do Google Drive (Laudo PDF + .PJC)" class="input-inline" style="flex:1;">
+                <button class="btn-action btn-success" onclick="concluirEntregaCalculo('${p.id}')">
+                  Entregar Cálculo
+                </button>
+              </div>
+
+              <!-- Mudança manual de status se necessário -->
+              <select class="input-inline" onchange="mudarStatusManual('${p.id}', this.value)">
+                <option value="" disabled selected>Alterar Status...</option>
+                <option value="em_analise">2. Em Análise</option>
+                <option value="aprovado">3. Aprovado</option>
+                <option value="em_elaboracao">7. Em Elaboração</option>
+              </select>
+            </div>
+
+            <!-- Fórum Técnico de Alinhamento (sem avançar etapa) -->
+            <div class="forum-section">
+              <div class="forum-title">💬 Fórum Técnico com o Advogado (Apontamento de divergências / Art. 840 CLT):</div>
+              <div class="chat-box" id="chat_${p.id}">
+                <span style="font-size:0.8rem; color:var(--muted);">Carregando histórico...</span>
+              </div>
+              <div class="chat-input-row">
+                <input type="text" id="input_msg_${p.id}" placeholder="Escreva uma orientação técnica ou retificação para o colega..." onkeydown="if(event.key==='Enter') enviarMensagemPerito('${p.id}')">
+                <button class="btn-action" onclick="enviarMensagemPerito('${p.id}')">Enviar Apontamento</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lista.forEach(p => carregarMensagens(p.id));
+    }
+
+    // 1. Download de Arquivos do Storage com Link Seguro Assinado (AES-256 / 1h de validade)
+    async function baixarArquivoSeguro(caminhoStorage) {
+      const { data, error } = await client.storage
+        .from('documentos_processos')
+        .createSignedUrl(caminhoStorage, 3600);
+
+      if (error) {
+        alert("Erro ao obter arquivo seguro: " + error.message);
+        return;
+      }
+      window.open(data.signedUrl, '_blank');
+    }
+
+    // 2. Gerar Cobrança InfinitePay em até 12x
+    async function gerarCobrancaInfinitePay(pedidoId) {
+      const pedido = cachePedidosAdmin.find(p => p.id === pedidoId);
+      const valorInput = document.getElementById(`valor_${pedidoId}`).value;
+
+      if (!valorInput || parseFloat(valorInput) <= 0) {
+        alert("Informe um valor válido em reais.");
+        return;
+      }
+
+      const valorNumerico = parseFloat(valorInput);
+      const centavos = Math.round(valorNumerico * 100);
+      const linkCheckout = `https://checkout.infinitepay.com.br/${INFINITEPAY_HANDLE}?amount=${centavos}&nsu=${pedidoId}`;
+
+      const { error } = await client.from('pedidos_calculos').update({
+        valor: valorNumerico,
+        link_pagamento: linkCheckout,
+        status: 'aguardando_pagamento'
+      }).eq('id', pedidoId);
+
+      if (error) {
+        alert("Erro ao atualizar cobrança: " + error.message);
+        return;
+      }
+
+      // Dispara o WhatsApp (se a Feature Flag for ativada no futuro)
+      await notificarCobrancaWhatsApp(pedido, linkCheckout, valorNumerico, client);
+
+      alert(`Cobrança de R$ ${valorNumerico.toFixed(2)} gerada com sucesso! Link pronto para 12x ou Pix.`);
+      await carregarDadosMaster();
+    }
+
+    // 3. Concluir Entrega (Inserir link do Google Drive)
+    async function concluirEntregaCalculo(pedidoId) {
+      const pedido = cachePedidosAdmin.find(p => p.id === pedidoId);
+      const linkDrive = document.getElementById(`drive_${pedidoId}`).value.trim();
+
+      if (!linkDrive) {
+        alert("Insira o link do Google Drive contendo o PDF e o .PJC.");
+        return;
+      }
+
+      const { error } = await client.from('pedidos_calculos').update({
+        link_drive: linkDrive,
+        status: 'entregue'
+      }).eq('id', pedidoId);
+
+      if (error) {
+        alert("Erro ao entregar: " + error.message);
+        return;
+      }
+
+      // Dispara aviso de entrega no WhatsApp
+      await notificarEntregaWhatsApp(pedido, linkDrive, client);
+
+      alert("Cálculo entregue com sucesso! O advogado já pode baixar os relatórios.");
+      await carregarDadosMaster();
+    }
+
+    // 4. Alteração Manual de Fase
+    async function mudarStatusManual(pedidoId, novoStatus) {
+      if (!novoStatus) return;
+      const { error } = await client.from('pedidos_calculos').update({ status: novoStatus }).eq('id', pedidoId);
+      if (error) alert("Erro: " + error.message);
+      else await carregarDadosMaster();
+    }
+
+    // 5. Histórico e Envio de Mensagens no Fórum
+    async function carregarMensagens(pedidoId) {
+      const { data: msgs } = await client
+        .from('mensagens_processo')
+        .select('*')
+        .eq('pedido_id', pedidoId)
+        .order('created_at', { ascending: true });
+
+      const box = document.getElementById(`chat_${pedidoId}`);
+      if (!box) return;
+
+      if (!msgs || msgs.length === 0) {
+        box.innerHTML = `<span style="font-size: 0.8rem; color: var(--muted);">Nenhuma mensagem registrada.</span>`;
+        return;
+      }
+
+      box.innerHTML = msgs.map(m => `
+        <div class="chat-bubble ${m.is_admin ? 'chat-perito' : 'chat-advogado'}">
+          <strong>${m.is_admin ? 'Dr. André (Perito)' : 'Advogado'}:</strong> ${m.mensagem}
+        </div>
+      `).join('');
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function enviarMensagemPerito(pedidoId) {
+      const pedido = cachePedidosAdmin.find(p => p.id === pedidoId);
+      const input = document.getElementById(`input_

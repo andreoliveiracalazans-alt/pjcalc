@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Processos | Dr. André Calazans</title>
+
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --infinite: #00e599;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 4rem; }
+
+    /* Barra Superior */
+    header { background: var(--primary); color: #fff; padding: 1.1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px; }
+    .brand span { color: #94a3b8; font-weight: 400; font-size: 0.9rem; }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+    .btn-action { background: var(--accent); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 6px; font-weight: 600; text-decoration: none; cursor: pointer; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 0.4rem; transition: background 0.2s; }
+    .btn-action:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-infinite { background: #000; color: var(--infinite); border: 1px solid var(--infinite); font-weight: 700; }
+    .btn-infinite:hover { background: #111; }
+    .btn-success { background: var(--success); }
+    .btn-success:hover { background: #15803d; }
+
+    .container { max-width: 960px; margin: 2.5rem auto; padding: 0 1rem; }
+
+    /* Cabeçalho da Lista */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+    .user-info { font-size: 0.88rem; color: var(--muted); }
+
+    /* Card do Processo */
+    .pedido-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.6rem; margin-bottom: 1.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .pedido-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.8rem; }
+    .processo-num { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+    .processo-servico { font-size: 0.85rem; color: var(--accent); font-weight: 600; background: #eff6ff; padding: 0.2rem 0.6rem; border-radius: 4px; display: inline-block; margin-top: 0.25rem; }
+    .processo-prazo { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+
+    /* Linha do Tempo / Esteira Visual */
+    .timeline-container { margin: 1.4rem 0; overflow-x: auto; padding-bottom: 0.5rem; }
+    .timeline-steps { display: flex; gap: 0.4rem; min-width: 650px; }
+    .t-step { font-size: 0.72rem; padding: 0.35rem 0.7rem; border-radius: 20px; background: #f1f5f9; color: var(--muted); border: 1px solid var(--border); white-space: nowrap; }
+    .t-step.done { background: #dcfce7; color: var(--success); border-color: #bbf7d0; font-weight: 600; }
+    .t-step.now { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; box-shadow: 0 2px 4px rgba(37,99,235,0.25); }
+
+    /* Blocos de Ação (Pagamento e Entrega) */
+    .box-cobranca { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid var(--infinite); border-radius: 8px; padding: 1.25rem; margin: 1.2rem 0; }
+    .box-cobranca strong { font-size: 1.05rem; color: var(--primary); }
+    .cobranca-actions { display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+    .box-entrega { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid var(--success); border-radius: 8px; padding: 1.25rem; margin: 1.2rem 0; }
+    .box-entrega strong { font-size: 1.05rem; color: #166534; }
+
+    /* Fórum Técnico de Alinhamento */
+    .forum-area { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.2rem; }
+    .forum-title { font-size: 0.88rem; font-weight: 700; color: var(--primary); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+    .chat-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.75rem; }
+    .chat-bubble { font-size: 0.85rem; padding: 0.6rem 0.85rem; border-radius: 8px; max-width: 85%; line-height: 1.4; }
+    .chat-perito { background: #dbeafe; color: #1e40af; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .chat-advogado { background: #e2e8f0; color: var(--text); align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-input-row { display: flex; gap: 0.5rem; }
+    .chat-input-row input { flex: 1; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.88rem; }
+    .chat-input-row input:focus { outline: none; border-color: var(--accent); }
+
+    /* Estado Vazio */
+    .empty-state { text-align: center; background: #fff; border: 1px dashed var(--border); border-radius: 12px; padding: 3.5rem 1.5rem; margin-top: 2rem; }
+    .empty-state h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.92rem; color: var(--muted); margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Topo -->
+  <header>
+    <div class="brand">Dr. André Calazans <span>| Área do Advogado</span></div>
+    <div class="nav-actions">
+      <a href="novo-pedido.html" class="btn-action">+ Nova Demanda</a>
+      <button class="btn-action btn-secondary" onclick="fazerLogout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h2>Meus Processos</h2>
+        <span class="user-info" id="userDisplayEmail">Carregando perfil...</span>
+      </div>
+      <a href="novo-pedido.html" class="btn-action">+ Cadastrar Novo Cálculo</a>
+    </div>
+
+    <!-- Lista Dinâmica de Processos -->
+    <div id="listaProcessos">
+      <p style="color: var(--muted);">Carregando esteira pericial...</p>
+    </div>
+  </main>
+
+  <script>
+    // =========================================================================
+    // CONFIGURAÇÕES SUPABASE
+    // =========================================================================
+    const SUPABASE_URL = "SUA_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let usuarioAtual = null;
+
+    // Definição das 8 etapas oficiais
+    const ETAPAS = [
+      { key: 'solicitado', label: '1. Solicitado' },
+      { key: 'em_analise', label: '2. Em Análise' },
+      { key: 'aprovado', label: '3. Aprovado' },
+      { key: 'aguardando_pagamento', label: '4. Pagamento Disponível' },
+      { key: 'pagamento_realizado', label: '5. Pago' },
+      { key: 'na_fila_de_calculos', label: '6. Na Fila' },
+      { key: 'em_elaboracao', label: '7. Em Elaboração' },
+      { key: 'entregue', label: '8. Entregue' }
+    ];
+
+    // Inicialização e Verificação de Sessão
+    async function init() {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) {
+        window.location.href = "index.html";
+        return;
+      }
+      usuarioAtual = session.user;
+      document.getElementById('userDisplayEmail').innerText = `Logado como: ${usuarioAtual.email}`;
+
+      await carregarProcessos();
+    }
+
+    // Carregar pedidos do usuário logado
+    async function carregarProcessos() {
+      const { data: pedidos, error } = await client
+        .from('pedidos_calculos')
+        .select('*')
+        .eq('user_id', usuarioAtual.id)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('listaProcessos');
+
+      if (error) {
+        container.innerHTML = `<p style="color: var(--danger);">Erro ao carregar dados: ${error.message}</p>`;
+        return;
+      }
+
+      if (!pedidos || pedidos.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Nenhum cálculo em acompanhamento</h3>
+            <p>Você ainda não protocolou demandas periciais no sistema.</p>
+            <a href="novo-pedido.html" class="btn-action">+ Cadastrar Primeira Demanda</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Renderizar Cards dos Processos
+      container.innerHTML = pedidos.map(p => {
+        const etapaAtualIdx = ETAPAS.findIndex(e => e.key === p.status);
+        
+        // Render da Timeline
+        const stepsHtml = ETAPAS.map((etapa, idx) => {
+          let classe = 't-step';
+          if (idx < etapaAtualIdx) classe += ' done';
+          else if (idx === etapaAtualIdx) classe += ' now';
+          return `<span class="${classe}">${etapa.label}</span>`;
+        }).join('');
+
+        // 1. Bloco de Pagamento (Se o cálculo foi orçado e liberado)
+        let htmlPagamento = '';
+        if (p.status === 'aguardando_pagamento' && p.link_pagamento) {
+          const valorFormatado = parseFloat(p.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          const textoWhatsApp = encodeURIComponent(
+            `Olá! Segue o link seguro para liquidação dos cálculos periciais do processo nº ${p.numero_processo}: ${p.link_pagamento} (Opção via Pix ou parcelado em até 12x no cartão).`
+          );
+
+          htmlPagamento = `
+            <div class="box-cobranca">
+              <div><strong>Honorários Periciais Aprovados: ${valorFormatado}</strong></div>
+              <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem;">
+                Você pode liquidar diretamente ou repassar o link para o reclamante/cliente efetuar o pagamento.
+              </p>
+              <div class="cobranca-actions">
+                <a href="${p.link_pagamento}" target="_blank" class="btn-action btn-infinite">💳 Pagar Agora (12x ou Pix)</a>
+                <a href="https://wa.me/?text=${textoWhatsApp}" target="_blank" class="btn-action btn-secondary">📲 Repassar Link para o Cliente via WhatsApp</a>
+              </div>
+            </div>
+          `;
+        }
+
+        // 2. Bloco de Entrega (Se o cálculo foi concluído pelo perito)
+        let htmlEntrega = '';
+        if (p.status === 'entregue' && p.link_drive) {
+          htmlEntrega = `
+            <div class="box-entrega">
+              <div><strong>🎉 Laudo Pericial & Arquivo .PJC Concluídos!</strong></div>
+              <p style="font-size: 0.85rem; color: #166534; margin: 0.2rem 0 0.8rem 0;">
+                Os relatórios em PDF com fundamentação jurídica completa e o arquivo exportável do PJe-Calc estão disponíveis para download.
+              </p>
+              <a href="${p.link_drive}" target="_blank" class="btn-action btn-success">⬇️ Baixar Arquivos no Google Drive</a>
+            </div>
+          `;
+        }
+
+        const dataFormatada = p.prazo_fatal ? p.prazo_fatal.split('-').reverse().join('/') : 'Não informado';
+
+        return `
+          <div class="pedido-item" id="card_${p.id}">
+            <div class="pedido-top">
+              <div>
+                <div class="processo-num">${p.numero_processo}</div>
+                <div class="processo-servico">${p.tipo_servico}</div>
+                <div class="processo-prazo">Prazo Fatal: <strong>${dataFormatada}</strong></div>
+              </div>
+            </div>
+
+            <!-- Esteira em 8 Etapas -->
+            <div class="timeline-container">
+              <div class="timeline-steps">
+                ${stepsHtml}
+              </div>
+            </div>
+
+            ${htmlPagamento}
+            ${htmlEntrega}
+
+            <!-- Fórum Técnico de Alinhamento -->
+            <div class="forum-area">
+              <div class="forum-title">💬 Alinhamento Técnico com o Dr. André (Perito)</div>
+              <div class="chat-box" id="chat_${p.id}">
+                <span style="font-size: 0.8rem; color: var(--muted);">Carregando mensagens...</span>
+              </div>
+              <div class="chat-input-row">
+                <input type="text" id="input_msg_${p.id}" placeholder="Escrever observação técnica ou responder ao perito..." onkeydown="if(event.key==='Enter') enviarMensagem('${p.id}')">
+                <button class="btn-action" onclick="enviarMensagem('${p.id}')">Enviar</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Carregar as mensagens de cada processo em paralelo
+      pedidos.forEach(p => carregarMensagens(p.id));
+    }
+
+    // Carregar histórico de mensagens do processo
+    async function carregarMensagens(pedidoId) {
+      const { data: msgs } = await client
+        .from('mensagens_processo')
+        .select('*')
+        .eq('pedido_id', pedidoId)
+        .order('created_at', { ascending: true });
+
+      const box = document.getElementById(`chat_${pedidoId}`);
+      if (!box) return;
+
+      if (!msgs || msgs.length === 0) {
+        box.innerHTML = `<span style="font-size: 0.8rem; color: var(--muted);">Nenhuma observação registrada neste processo.</span>`;
+        return;
+      }
+
+      box.innerHTML = msgs.map(m => `
+        <div class="chat-bubble ${m.is_admin ? 'chat-perito' : 'chat-advogado'}">
+          <strong>${m.is_admin ? 'Dr. André (Perito)' : 'Você'}:</strong> ${m.mensagem}
+        </div>
+      `).join('');
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Enviar mensagem no Fórum Técnico
+    async function enviarMensagem(pedidoId) {
+      const input = document.getElementById(`input_msg_${pedidoId}`);
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      input.disabled = true;
+
+      const { error } = await client.from('mensagens_processo').insert([{
+        pedido_id: pedidoId,
+        remetente_email: usuarioAtual.email,
+        is_admin: false,
+        mensagem: texto
+      }]);
+
+      input.disabled = false;
+
+      if (error) {
+        alert("Erro ao enviar mensagem: " + error.message);
+        return;
+      }
+
+      input.value = '';
+      await carregarMensagens(pedidoId);
+    }
+
+    // Logout
+    async function fazerLogout() {
+      await client.auth.signOut();
+      window.location.href = "index.html";
+    }
+
+    init();
+  </script>
+</body>
+</html>
