@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>EstudaJá</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --bg:#FFFBF2;--ink:#1B1B2F;--muted:#8A8A9B;--line:#EDE6D3;
+  --coral:#FF6B4A;--coral-light:#FFE4DA;
+  --teal:#2EC4B6;--teal-light:#D7F5F2;
+  --gold:#FFB400;--gold-light:#FFF1CC;
+  --purple:#6C5CE7;--paper:#FFFDF7;
+  --postit:#FFF8C9;--red:#C0392B;--green:#1B9C85;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Lexend',sans-serif}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+.fd{font-family:'Fredoka',sans-serif}
+.fm{font-family:'Space Mono',monospace}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#EDE6D3;border-radius:6px}
+.max-w{max-width:440px;margin:0 auto;padding:0 16px}
+header.topbar{position:sticky;top:0;z-index:30;background:rgba(255,251,242,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 16px}
+.topbar-inner{max-width:440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:19px;font-weight:600;font-family:'Fredoka',sans-serif}
+.brand span{color:var(--coral)}
+.top-right{display:flex;align-items:center;gap:10px}
+.streak-pill{display:flex;align-items:center;gap:4px;background:var(--gold-light);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace}
+.level-badge{width:28px;height:28px;border-radius:999px;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Fredoka',sans-serif}
+main{padding:20px 0 60px}
+
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:99;padding:10px 18px;border-radius:12px;font-size:14px;font-weight:500;color:#fff;box-shadow:0 8px 24px -8px rgba(27,27,47,.4);opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+#toast.show{opacity:1}
+#toast.info{background:var(--ink)}
+#toast.success{background:var(--teal)}
+#toast.error{background:var(--red)}
+
+#screen-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.spinner{width:44px;height:44px;border-radius:999px;border:4px solid var(--coral);border-top-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-brand{font-size:32px;font-weight:700;font-family:'Fredoka',sans-serif}
+.loading-brand span{color:var(--coral)}
+
+.btn-prim{width:100%;padding:14px;border-radius:12px;font-weight:600;color:#fff;background:var(--coral);font-family:'Fredoka',sans-serif;font-size:15px;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s}
+.btn-prim:disabled{opacity:.5;cursor:not-allowed}
+.btn-ink{background:var(--ink)}
+.btn-teal{background:var(--teal)}
+.btn-ghost{background:#F4F1E8;color:var(--ink)}
+.small-btn{padding:8px 12px;border-radius:999px;font-size:12px;font-weight:600;font-family:'Fredoka',sans-serif;display:flex;align-items:center;gap:4px}
+
+.xp-card{background:var(--ink);border-radius:16px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden}
+.xp-card::after{content:'';position:absolute;right:-32px;top:-32px;width:128px;height:128px;border-radius:999px;background:var(--coral);opacity:.2}
+.xp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;position:relative}
+.xp-row small{color:#9D9DB5;font-size:12px;display:block}
+.xp-big{color:#fff;font-size:24px;font-weight:600;font-family:'Fredoka',sans-serif;margin-top:2px}
+.xp-gold{color:var(--gold);display:flex;align-items:center;gap:4px;justify-content:flex-end}
+.xp-bar-track{height:10px;border-radius:999px;background:#2D2D45;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--coral),var(--gold));transition:width .5s}
+.xp-caption{color:#9D9DB5;font-size:12px;margin-top:6px;position:relative}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-head h2{font-size:18px;font-weight:600;font-family:'Fredoka',sans-serif}
+.materias-list{display:flex;flex-direction:column;gap:10px}
+.materia-card{background:#fff;border-radius:16px;overflow:hidden;display:flex;align-items:stretch;box-shadow:0 1px 3px rgba(27,27,47,.08)}
+.mat-spine{width:8px;flex-shrink:0}
+.mat-main{flex:1;text-align:left;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.mat-name{font-weight:600;text-transform:capitalize;font-family:'Fredoka',sans-serif;font-size:15px}
+.mat-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.mat-progress-bar{height:6px;border-radius:999px;background:#F4F1E8;margin-top:8px;overflow:hidden}
+.mat-progress-fill{height:100%;border-radius:999px;transition:width .4s;background:var(--teal)}
+.mat-arrow{width:36px;height:36px;border-radius:999px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+.choice-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
+.choice-card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;text-align:left;transition:all .15s}
+.choice-card:hover{border-color:var(--coral);background:var(--coral-light)}
+.choice-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+
+.video-wrapper{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.15);margin:16px 0}
+.video-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.video-playlist{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;max-height:220px;overflow-y:auto;padding-right:4px}
+.video-item{padding:12px 14px;background:#fff;border:1.5px solid var(--line);border-radius:12px;text-align:left;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;transition:all .15s}
+.video-item.active{border-color:var(--coral);background:var(--coral-light);color:var(--coral);font-weight:600}
+
+.back-link{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--muted);margin-bottom:16px}
+.setup-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(27,27,47,.08)}
+.setup-spine{width:8px;align-self:stretch;border-radius:4px;flex-shrink:0}
+.qty-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.qty-chip{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px 8px;text-align:center;transition:all .15s}
+.qty-chip .qty-n{font-size:22px;font-weight:700;font-family:'Fredoka',sans-serif;display:block}
+.qty-chip .qty-l{font-size:12px;color:var(--muted);margin-top:2px;display:block}
+.qty-chip.sel{background:var(--coral-light);border-color:var(--coral)}
+.qty-chip.sel .qty-n{color:var(--coral)}
+
+.quiz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.trail{display:flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:200px;justify-content:center}
+.trail-dot{border-radius:999px;background:#E9E2CF;transition:all .3s}
+.trail-dot.done{background:var(--teal)}.trail-dot.cur{background:var(--coral)}
+.quiz-score{display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--teal)}
+.notebook{position:relative;border-radius:16px;padding:20px 20px 20px 36px;margin-bottom:20px;background:var(--paper);background-image:repeating-linear-gradient(to bottom,transparent,transparent 35px,#E9E2CF 36px);box-shadow:0 1px 0 #E9E2CF inset,0 8px 24px -12px rgba(27,27,47,.25);border:1px solid var(--line)}
+.notebook::before{content:'';position:absolute;left:28px;top:0;bottom:0;width:1px;background:#F3B6A8}
+.notebook .eyebrow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--coral);margin-bottom:8px}
+.notebook .question{font-size:17px;font-weight:600;line-height:1.4;font-family:'Fredoka',sans-serif}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.option{width:100%;text-align:left;padding:14px 16px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;font-weight:500;transition:all .15s;background:#fff;border:1.5px solid var(--line)}
+.option .opt-l{display:flex;align-items:center;gap:10px}
+.option .opt-k{width:24px;height:24px;border-radius:999px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;background:#F4F1E8}
+.option.answered .opt-k{background:transparent;border:1.5px solid currentColor}
+.option.correct{background:var(--teal-light);border-color:var(--teal);color:#117A6E}
+.option.wrong{background:var(--coral-light);border-color:var(--coral);color:var(--red)}
+.option.faded{background:#FAFAF6;border-color:var(--line);color:#B5B5C2}
+.option:disabled{cursor:default}
+.postit{background:var(--postit);border-radius:12px;padding:16px;margin-bottom:16px;transform:rotate(-.6deg);box-shadow:0 4px 10px -4px rgba(27,27,47,.25)}
+.postit .pl{font-size:12px;font-weight:700;text-transform:uppercase;color:#8A6D00;margin-bottom:4px}
+.postit .pt{font-size:14px;color:#4A3F00;line-height:1.4}
+
+.result-wrap{text-align:center;padding-top:32px}
+.result-trophy{width:80px;height:80px;border-radius:999px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.result-trophy svg{width:36px;height:36px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.result-stat{background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(27,27,47,.08)}
+.result-stat .rn{font-size:30px;font-weight:700;font-family:'Fredoka',sans-serif;margin:0}
+.result-stat .rl{font-size:12px;color:var(--muted);margin:2px 0 0}
+.result-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+
+.modal-overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(27,27,47,.55)}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 24px 48px -12px rgba(27,27,47,.4)}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:8px;font-family:'Fredoka',sans-serif}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions button{flex:1;padding:11px;border-radius:12px;font-weight:600;font-size:14px;font-family:'Fredoka',sans-serif}
+
+@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.anim-pop{animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both}
+.anim-slide{animation:slideUp .3s ease both}
+.shake{animation:shake .45s ease}
+</style>
+</head>
+<body>
+
+<div id="screen-loading">
+  <div class="loading-brand fd"><span>Estuda</span>Já</div>
+  <div class="spinner"></div>
+  <p id="loading-txt" style="color:var(--muted);font-size:13px">Sincronizando matérias do GitHub...</p>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand fd"><span>Estuda</span>Já</div>
+      <div class="top-right">
+        <div class="streak-pill">🔥 <span id="top-streak">0</span></div>
+        <div class="level-badge fd" id="top-level">1</div>
+      </div>
+    </div>
+  </header>
+  <main class="max-w">
+    <div class="xp-card">
+      <div class="xp-row">
+        <div><small style="color:#9D9DB5">Progresso Geral</small><p class="xp-big fd" id="xp-total">0 XP</p></div>
+        <div style="text-align:right"><small style="color:#9D9DB5">Sequência</small><p class="xp-big fd xp-gold">🔥 <span id="xp-streak">0</span></p></div>
+      </div>
+      <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+      <p class="xp-caption"><span id="xp-into">0</span>/100 para o nível <span id="xp-next">2</span></p>
+    </div>
+
+    <div class="section-head">
+      <h2 class="fd">Matérias Disponíveis</h2>
+      <button class="small-btn" style="background:var(--teal-light);color:var(--teal)" id="btn-sync-github">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 11-.57-8.38l5.67-5.67"/></svg>Atualizar
+      </button>
+    </div>
+    <div id="materias-list" class="materias-list"></div>
+  </main>
+</div>
+
+<!-- OPÇÕES DA MATÉRIA (EXERCÍCIO OU VÍDEO) -->
+<div id="screen-materia-opt" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner"><div class="brand fd"><span>Estuda</span>Já</div></div>
+  </header>
+  <main class="max-w">
+    <button class="back-link" id="btn-mat-opt-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+    </button>
+    <div class="setup-card">
+      <div class="setup-spine" id="opt-mat-spine"></div>
+      <div style="flex:1">
+        <p class="mat-name fd" id="opt-mat-title"></p>
+        <p class="mat-meta" id="opt-mat-meta"></p>
+        <div class="mat-progress-bar">
+          <div class="mat-progress-fill" id="opt-mat-progress" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600">Escolha como pretende estudar:</p>
+    <div class="choice-grid">
+      <button class="choice-card" id="btn-choice-quiz">
+        <div class="choice-icon" style="background:var(--coral-light);color:var(--coral)">✍️</div>
+        <div>
+          <p class="fd" style="font-size:16px;font-weight:600">Fazer Exercícios</p>
+          <p style="font-size:12px;color:var(--muted)">Apenas perguntas pendentes. Erros repetem até acertar.</p>
+        </div>
+      </button>
+      <button class="choice-card" id="btn-choice-video">
+        <div class="choice-icon" style="background:var(--teal-light);color:var(--teal)">🎬</div>
+        <div>
+          <p class="fd" style="font-size:16px;font-weight:600">Assistir Vídeo-Aulas</p>
+          <p style="font-size:12px;color:var(--muted)" id="opt-mat-video-sub">Vídeos do YouTube</p>
+        </div>
+      </button>
+    </div>
+    <button class="btn-prim btn-ghost" id="btn-reset-prog" style="margin-top:20px;font-size:13px">🔄 Reiniciar questões para revisar</button>
+  </main>
+</div>
+
+<!-- VÍDEO AULAS -->
+<div id="screen-video" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner"><div class="brand fd"><span>Estuda</span>Já</div></div>
+  </header>
+  <main class="max-w">
+    <button class="back-link" id="btn-video-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+    </button>
+    <h2 class="fd" id="video-title" style="font-size:18px;margin-bottom:4px">Vídeo Aula</h2>
+    <div class="video-wrapper" id="video-box"></div>
+    <p style="font-size:12px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Aulas Disponíveis</p>
+    <div class="video-playlist" id="video-playlist"></div>
+    <button class="btn-prim btn-ink" id="btn-video-go-quiz">Fazer Exercícios desta Matéria 🚀</button>
+  </main>
+</div>
+
+<!-- SETUP RODADA -->
+<div id="screen-setup" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand fd"><span>Estuda</span>Já</div>
+      <div class="top-right">
+        <div class="streak-pill">🔥 <span id="setup-streak">0</span></div>
+        <div class="level-badge fd" id="setup-level">1</div>
+      </div>
+    </div>
+  </header>
+  <main class="max-w">
+    <button class="back-link" id="btn-setup-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Voltar
+    </button>
+    <div class="setup-card">
+      <div class="setup-spine" id="setup-spine"></div>
+      <div><p class="mat-name fd" id="setup-mat-name"></p><p class="mat-meta" id="setup-mat-meta"></p></div>
+    </div>
+    <p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-bottom:10px">Quantidade de Questões</p>
+    <div class="qty-grid" id="qty-grid"></div>
+    <button class="btn-prim" id="btn-comecar">Começar Rodada 🚀</button>
+  </main>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand fd"><span>Estuda</span>Já</div>
+      <div class="top-right">
+        <div class="streak-pill">🔥 <span id="quiz-streak">0</span></div>
+        <div class="level-badge fd" id="quiz-level">1</div>
+      </div>
+    </div>
+  </header>
+  <main class="max-w">
+    <div class="quiz-top">
+      <button id="btn-quiz-sair" style="color:var(--muted)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="trail" id="quiz-trail"></div>
+      <div class="quiz-score">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2EC4B6" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        <span id="quiz-correct">0</span>
+      </div>
+    </div>
+    <div class="notebook">
+      <p class="eyebrow" id="quiz-eyebrow"></p>
+      <p class="question" id="quiz-question"></p>
+    </div>
+    <div class="options" id="quiz-options"></div>
+    <div id="quiz-answer-area" class="hidden"></div>
+  </main>
+</div>
+
+<!-- RESULTADO -->
+<div id="screen-result" class="hidden">
+  <header class="topbar">
+    <div class="topbar-inner"><div class="brand fd"><span>Estuda</span>Já</div></div>
+  </header>
+  <main class="max-w">
+    <div class="result-wrap">
+      <div class="result-trophy anim-pop" id="result-trophy">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" id="result-svg"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z"/><path d="M7 6H4a1 1 0 00-1 1 4 4 0 004 4M17 6h3a1 1 0 011 1 4 4 0 01-4 4"/></svg>
+      </div>
+      <h2 class="fd" style="font-size:24px;margin-bottom:4px">Rodada Concluída!</h2>
+      <p style="font-size:14px;color:var(--muted);text-transform:capitalize;margin-bottom:24px" id="result-materia"></p>
+      <div class="result-grid">
+        <div class="result-stat"><p class="rn" id="result-score" style="color:var(--teal)">0/0</p><p class="rl">Dominadas</p></div>
+        <div class="result-stat"><p class="rn" id="result-xp" style="color:var(--coral)">+0</p><p class="rl">XP Ganho</p></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-prim" id="btn-retry">Continuar Estudando</button>
+        <button class="btn-prim btn-ink" id="btn-result-home">Voltar ao Início</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- MODAL SAIR DO QUIZ -->
+<div class="modal-overlay" id="modal-confirm-exit">
+  <div class="modal-box anim-slide">
+    <p class="modal-title fd">Deseja sair do quiz?</p>
+    <p style="font-size:14px;color:var(--muted)">As questões pendentes não serão marcadas como dominadas.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="btn-exit-cancel">Continuar</button>
+      <button style="background:var(--coral);color:#fff" id="btn-exit-ok">Sair</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAÇÃO REINICIAR (PERDA DE SEQUÊNCIA) -->
+<div class="modal-overlay" id="modal-confirm-reset">
+  <div class="modal-box anim-slide">
+    <p class="modal-title fd" style="color:var(--red)">Atenção: Perda de Sequência! 🔥</p>
+    <p style="font-size:14px;color:var(--muted);line-height:1.5">
+      Ao reiniciar esta matéria para revisão, todas as questões acertadas voltarão ao início e <strong>sua sequência diária será zerada</strong>.
+    </p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="btn-reset-cancel">Cancelar</button>
+      <button style="background:var(--red);color:#fff" id="btn-reset-ok">Zerar e Revisar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GITHUB_REPO_API = 'https://api.github.com/repos/andreoliveiracalazans-alt/base/contents';
+
+let materiasData = {};
+let statsAtivo = { xp: 0, streak: 1, nivel: 1, total_respondidas: 0, total_acertos: 0, ultimo_dia: '' };
+let selectedSlug = null;
+let setupQty = 10;
+let quizQueue = [], quizIndex = 0, sessionCorrect = 0, sessionTotal = 0, sessionXP = 0, sessionRetry = [];
+let answered = false;
+
+// ═══════════════════════════════════════════════════════
+//  SISTEMA DE ÁUDIO NATIVO (Web Audio API)
+// ═══════════════════════════════════════════════════════
+let _audioCtx = null;
+function getAudioCtx(){
+  if(!_audioCtx) _audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+  return _audioCtx;
+}
+
+function playTone(notes, vol = 0.3){
+  try{
+    const ctx = getAudioCtx();
+    notes.forEach(([freq, startTime, dur, type = 'sine']) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+      gain.gain.setValueAtTime(vol, ctx.currentTime + startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + dur);
+      osc.start(ctx.currentTime + startTime);
+      osc.stop(ctx.currentTime + startTime + dur + 0.01);
+    });
+  }catch(e){}
+}
+
+const SOM = {
+  acerto:   () => playTone([[523, 0, .1], [659, .08, .1], [784, .16, .2]]),
+  erro:     () => playTone([[330, 0, .15, 'sawtooth'], [220, .12, .22, 'sawtooth']], .25),
+  conclusao:() => playTone([[523, 0, .15], [659, .12, .15], [784, .24, .15], [1047, .36, .4]]),
+  click:    () => playTone([[440, 0, .05], [880, .04, .06]], .15)
+};
+
+// ═══════════════════════════════════════════════════════
+//  HISTÓRICO DE TELAS (VOLTAR NAVEGADOR/CELULAR)
+// ═══════════════════════════════════════════════════════
+const SCREENS = ['loading', 'home', 'materia-opt', 'video', 'setup', 'quiz', 'result'];
+let currentScreen = 'loading';
+
+function navigateTo(screenId, pushHistory = true){
+  if(currentScreen === screenId) return;
+  SCREENS.forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if(el) el.classList.toggle('hidden', s !== screenId);
+  });
+  currentScreen = screenId;
+  if(pushHistory){
+    window.history.pushState({ screen: screenId }, '', '#' + screenId);
+  }
+}
+
+window.addEventListener('popstate', (e) => {
+  if(currentScreen === 'quiz'){
+    window.history.pushState({ screen: 'quiz' }, '', '#quiz');
+    document.getElementById('modal-confirm-exit').classList.add('show');
+    return;
+  }
+  if(e.state && e.state.screen){
+    navigateTo(e.state.screen, false);
+  } else {
+    navigateTo('home', false);
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  FEEDBACK
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg, type = 'info'){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = type; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  REGISTRO LOCAL: STATS E QUESTÕES DOMINADAS (LOCALSTORAGE)
+// ═══════════════════════════════════════════════════════
+function getProgKey(slug, qId){
+  return `ej_dominada_${slug}_${qId}`;
+}
+
+function questaoJaDominada(slug, qId){
+  return localStorage.getItem(getProgKey(slug, qId)) === '1';
+}
+
+function marcarQuestaoDominada(slug, qId){
+  localStorage.setItem(getProgKey(slug, qId), '1');
+}
+
+function obterEstatisticasMateria(slug){
+  const qs = materiasData[slug]?.questions || [];
+  const dominadas = qs.filter(q => questaoJaDominada(slug, q.id)).length;
+  const total = qs.length;
+  const pct = total > 0 ? Math.round((dominadas / total) * 100) : 0;
+  return { dominadas, total, pct };
+}
+
+function carregarStats(){
+  try{
+    const s = JSON.parse(localStorage.getItem('ej_local_stats') || '{}');
+    statsAtivo = Object.assign(statsAtivo, s);
+  }catch(e){}
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  if(statsAtivo.ultimo_dia && statsAtivo.ultimo_dia !== hoje){
+    const diff = Math.round((new Date(hoje) - new Date(statsAtivo.ultimo_dia)) / 86400000);
+    if(diff > 1){
+      statsAtivo.streak = 1;
+    } else if(diff === 1){
+      statsAtivo.streak = (statsAtivo.streak || 0) + 1;
+    }
+  }
+  statsAtivo.ultimo_dia = hoje;
+  salvarStats();
+  renderHomeStats();
+}
+
+function salvarStats(){
+  localStorage.setItem('ej_local_stats', JSON.stringify(statsAtivo));
+}
+
+function renderHomeStats(){
+  const xpInto = statsAtivo.xp % 100;
+  document.getElementById('xp-total').textContent = statsAtivo.xp + ' XP';
+  document.getElementById('xp-streak').textContent = statsAtivo.streak || 0;
+  document.getElementById('xp-bar').style.width = xpInto + '%';
+  document.getElementById('xp-into').textContent = xpInto;
+  document.getElementById('xp-next').textContent = (statsAtivo.nivel || 1) + 1;
+  document.getElementById('top-streak').textContent = statsAtivo.streak || 0;
+  document.getElementById('top-level').textContent = statsAtivo.nivel || 1;
+}
+
+// ═══════════════════════════════════════════════════════
+//  DECODIFICADOR UTF-8
+// ═══════════════════════════════════════════════════════
+function decodeBase64Utf8(base64Str) {
+  try {
+    const cleanStr = String(base64Str || '').replace(/\s/g, '');
+    const binaryStr = atob(cleanStr);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+    return new TextDecoder('utf-8').decode(bytes);
+  } catch (e) {
+    return atob(String(base64Str || '').replace(/\s/g, ''));
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  PARSER SQL TOLERANTE A PONTUAÇÕES E PARÊNTESES
+// ═══════════════════════════════════════════════════════
+function parseSql(txt, fallbackSlug = 'geral') {
+  const sanitized = txt.replace(/--.*$/gm, '');
+
+  let cm = sanitized.match(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[`"\[]?(\w+)[`"\]]?/i);
+  if (!cm) cm = sanitized.match(/INSERT\s+INTO\s+[`"\[]?(\w+)[`"\]]?/i);
+  const slug = cm ? cm[1].toLowerCase() : fallbackSlug;
+
+  const valuesIndex = sanitized.search(/\bVALUES\b/i);
+  const targetText = valuesIndex !== -1 ? sanitized.substring(valuesIndex + 6) : sanitized;
+
+  const tuples = [];
+  let inString = false;
+  let inTuple = false;
+  let currentTuple = '';
+
+  for (let i = 0; i < targetText.length; i++) {
+    const ch = targetText[i];
+
+    if (ch === "'") {
+      if (inString && targetText[i + 1] === "'") {
+        currentTuple += "''";
+        i++;
+        continue;
+      }
+      inString = !inString;
+      if (inTuple) currentTuple += ch;
+      continue;
+    }
+
+    if (!inString) {
+      if (ch === '(' && !inTuple) {
+        inTuple = true;
+        currentTuple = '';
+        continue;
+      }
+      if (ch === ')' && inTuple) {
+        inTuple = false;
+        tuples.push(currentTuple);
+        currentTuple = '';
+        continue;
+      }
+    }
+
+    if (inTuple) {
+      currentTuple += ch;
+    }
+  }
+
+  const rows = [];
+  tuples.forEach((tup, index) => {
+    const vals = splitTupleValues(tup);
+    if (vals.length >= 7) {
+      rows.push({
+        id: cleanVal(vals[0]) || (index + 1),
+        pergunta: cleanVal(vals[1]),
+        tipo: cleanVal(vals[2]),
+        opcao_a: cleanVal(vals[3]),
+        opcao_b: cleanVal(vals[4]),
+        opcao_c: cleanVal(vals[5]),
+        opcao_d: cleanVal(vals[6]),
+        resposta_correta: cleanVal(vals[7]),
+        explicacao: cleanVal(vals[8]) || ''
+      });
+    }
+  });
+
+  const questions = rows.map((r, i) => normalizeRow(r, i)).filter(q => q.pergunta && q.correct);
+  return { slug, questions };
+}
+
+function splitTupleValues(tupleContent) {
+  const values = [];
+  let current = '';
+  let inString = false;
+
+  for (let i = 0; i < tupleContent.length; i++) {
+    const ch = tupleContent[i];
+
+    if (ch === "'") {
+      if (inString && tupleContent[i + 1] === "'") {
+        current += "'";
+        i++;
+        continue;
+      }
+      inString = !inString;
+      continue;
+    }
+
+    if (ch === ',' && !inString) {
+      values.push(current.trim());
+      current = '';
+      continue;
+    }
+
+    current += ch;
+  }
+  values.push(current.trim());
+  return values;
+}
+
+function cleanVal(v) {
+  if (v === undefined || v === null) return null;
+  let s = String(v).trim();
+  if (/^null$/i.test(s)) return null;
+  if (s.startsWith("'") && s.endsWith("'")) s = s.slice(1, -1);
+  return s.replace(/''/g, "'");
+}
+
+function normalizeRow(r, i) {
+  const tipo = (r.tipo || '').toLowerCase().trim();
+  const pergunta = r.pergunta || '';
+  const explicacao = r.explicacao || '';
+  const id = parseInt(r.id || String(i + 1), 10);
+  let rc = String(r.resposta_correta || '').toLowerCase().trim();
+
+  let options = [], correct = null, type = 'multipla';
+
+  if (['certo_errado', 'vf', 'verdadeiro_falso'].includes(tipo) || (!r.opcao_c && (rc === 'certo' || rc === 'errado'))) {
+    type = 'certo_errado';
+    correct = (rc.startsWith('c') || rc === 'true' || rc === 'v') ? 'certo' : 'errado';
+    options = [
+      { key: 'certo', label: 'Certo' },
+      { key: 'errado', label: 'Errado' }
+    ];
+  } else {
+    ['a', 'b', 'c', 'd', 'e'].forEach(k => {
+      const val = r['opcao_' + k];
+      if (val !== undefined && val !== null && String(val).trim() !== '' && String(val).trim().toUpperCase() !== 'NULL') {
+        options.push({ key: k, label: String(val) });
+      }
+    });
+    correct = ['a', 'b', 'c', 'd', 'e'].includes(rc) ? rc : (options[0]?.key || 'a');
+  }
+
+  return { id, pergunta, type, options, correct, explicacao };
+}
+
+// ═══════════════════════════════════════════════════════
+//  SINCRONIZAÇÃO GITHUB
+// ═══════════════════════════════════════════════════════
+async function getFileContent(fileObj) {
+  if (fileObj.content && fileObj.encoding === 'base64') {
+    return decodeBase64Utf8(fileObj.content);
+  }
+  if (fileObj.download_url) {
+    try {
+      const res = await fetch(fileObj.download_url);
+      if (res.ok) return await res.text();
+    } catch (e) {}
+  }
+  if (fileObj.url) {
+    const res = await fetch(fileObj.url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.content && data.encoding === 'base64') {
+      return decodeBase64Utf8(data.content);
+    }
+  }
+  throw new Error(`Inacessível: ${fileObj.name}`);
+}
+
+async function fetchGithubMaterias(){
+  try {
+    const res = await fetch(GITHUB_REPO_API);
+    if (!res.ok) throw new Error(`Falha HTTP ${res.status} ao contactar GitHub.`);
+    const files = await res.json();
+
+    if (!Array.isArray(files)) throw new Error('Estrutura de diretório inválida.');
+
+    const sqlFiles = files.filter(f => f.name.toLowerCase().endsWith('.sql'));
+    const jsonFiles = files.filter(f => f.name.toLowerCase().endsWith('.json'));
+
+    let catalogJson = {};
+
+    for (const jf of jsonFiles) {
+      try {
+        const jText = await getFileContent(jf);
+        const parsedJson = JSON.parse(jText);
+        
+        if (parsedJson.materias && Array.isArray(parsedJson.materias)) {
+          parsedJson.materias.forEach(mat => {
+            const cleanId = String(mat.id).toLowerCase();
+            catalogJson[cleanId] = {
+              nome: mat.nome,
+              videos: mat.videos || [],
+              sql_url: mat.sql_url
+            };
+          });
+        } else {
+          const baseName = jf.name.replace(/\.json$/i, '').toLowerCase();
+          catalogJson[baseName] = {
+            videos: parsedJson.videos || (parsedJson.youtube_url ? [{ id: parsedJson.youtube_url, titulo: 'Aula Geral' }] : [])
+          };
+        }
+      } catch (e) {
+        console.warn('Aviso no JSON:', jf.name, e);
+      }
+    }
+
+    for (const sql of sqlFiles) {
+      const baseName = sql.name.replace(/\.sql$/i, '').toLowerCase();
+      const sqlText = await getFileContent(sql);
+      const parsed = parseSql(sqlText, baseName);
+
+      const finalSlug = parsed.slug || baseName;
+      const jsonMeta = catalogJson[finalSlug] || catalogJson[baseName] || {};
+
+      materiasData[finalSlug] = {
+        nome: jsonMeta.nome || (finalSlug.charAt(0).toUpperCase() + finalSlug.slice(1).replace(/_/g, ' ')),
+        questions: parsed.questions,
+        videos: jsonMeta.videos || []
+      };
+    }
+
+    localStorage.setItem('ej_materias_cache', JSON.stringify(materiasData));
+    renderHomeMaterias();
+    toast('Matérias sincronizadas com sucesso!', 'success');
+  } catch (err) {
+    console.error('Falha na busca:', err);
+    toast('Carregando dados salvos no cache...', 'info');
+    try {
+      materiasData = JSON.parse(localStorage.getItem('ej_materias_cache') || '{}');
+      renderHomeMaterias();
+    } catch (e) {}
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDERIZAÇÃO DA HOME
+// ═══════════════════════════════════════════════════════
+function renderHomeMaterias(){
+  const list = document.getElementById('materias-list');
+  const slugs = Object.keys(materiasData);
+  if(!slugs.length){
+    list.innerHTML = `
+      <div style="background:#FFF8E9;border:1.5px dashed #EDD9A3;border-radius:16px;padding:28px 16px;text-align:center">
+        <p style="font-size:32px;margin-bottom:8px">📂</p>
+        <p style="font-weight:600;font-family:'Fredoka',sans-serif;margin-bottom:4px">Nenhuma matéria encontrada</p>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Toque em Atualizar para buscar do GitHub.</p>
+      </div>`;
+    return;
+  }
+  list.innerHTML = slugs.map((slug) => {
+    const m = materiasData[slug];
+    const { dominadas, total, pct } = obterEstatisticasMateria(slug);
+    const nVideos = m.videos ? m.videos.length : 0;
+    return `
+      <div class="materia-card">
+        <div class="mat-spine" style="background:var(--coral)"></div>
+        <button class="mat-main" onclick="abrirOpcaoMateria('${slug}')">
+          <div style="flex:1">
+            <p class="mat-name">${m.nome}</p>
+            <p class="mat-meta">${dominadas}/${total} dominadas (${pct}%) ${nVideos > 0 ? `· 🎬 ${nVideos} vídeos` : ''}</p>
+            <div class="mat-progress-bar">
+              <div class="mat-progress-fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="mat-arrow" style="background:var(--coral-light)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+document.getElementById('btn-sync-github').addEventListener('click', async () => {
+  SOM.click();
+  toast('Atualizando do GitHub...', 'info');
+  await fetchGithubMaterias();
+});
+
+// ═══════════════════════════════════════════════════════
+//  OPÇÕES DA MATÉRIA (EXERCÍCIOS OU VÍDEOS)
+// ═══════════════════════════════════════════════════════
+window.abrirOpcaoMateria = function(slug){
+  selectedSlug = slug;
+  const m = materiasData[slug];
+  const { dominadas, total, pct } = obterEstatisticasMateria(slug);
+
+  document.getElementById('opt-mat-title').textContent = m.nome;
+  document.getElementById('opt-mat-meta').textContent = `${dominadas} de ${total} questões dominadas (${pct}%)`;
+  document.getElementById('opt-mat-progress').style.width = pct + '%';
+  document.getElementById('opt-mat-spine').style.background = 'var(--coral)';
+  
+  const nVideos = m.videos ? m.videos.length : 0;
+  document.getElementById('opt-mat-video-sub').textContent = nVideos > 0 
+    ? `${nVideos} aulas disponíveis nesta matéria` 
+    : 'Nenhum vídeo associado no momento';
+
+  SOM.click();
+  navigateTo('materia-opt');
+};
+
+document.getElementById('btn-mat-opt-back').addEventListener('click', () => window.history.back());
+
+// REINICIAR COM AVISO DE PERDA DE SEQUÊNCIA
+document.getElementById('btn-reset-prog').addEventListener('click', () => {
+  if(!selectedSlug) return;
+  document.getElementById('modal-confirm-reset').classList.add('show');
+});
+
+document.getElementById('btn-reset-cancel').addEventListener('click', () => {
+  document.getElementById('modal-confirm-reset').classList.remove('show');
+});
+
+document.getElementById('btn-reset-ok').addEventListener('click', () => {
+  document.getElementById('modal-confirm-reset').classList.remove('show');
+  if(!selectedSlug) return;
+
+  const m = materiasData[selectedSlug];
+  // Remove as questões dominadas
+  (m.questions || []).forEach(q => localStorage.removeItem(getProgKey(selectedSlug, q.id)));
+
+  // Zera a sequência
+  statsAtivo.streak = 0;
+  salvarStats();
+  renderHomeStats();
+
+  toast('Matéria reiniciada e sequência zerada para 0.', 'error');
+  abrirOpcaoMateria(selectedSlug);
+  renderHomeMaterias();
+});
+
+document.getElementById('btn-choice-quiz').addEventListener('click', () => {
+  SOM.click();
+  abrirSetupRodada(selectedSlug);
+});
+
+document.getElementById('btn-choice-video').addEventListener('click', () => {
+  const m = materiasData[selectedSlug];
+  if (!m.videos || m.videos.length === 0) {
+    toast('Esta matéria não possui vídeos cadastrados.', 'info');
+    return;
+  }
+  SOM.click();
+  abrirPlaylistVideos(m);
+});
+
+// ═══════════════════════════════════════════════════════
+//  SISTEMA DE VÍDEOS E PLAYLIST
+// ═══════════════════════════════════════════════════════
+function extrairYoutubeId(str){
+  if(!str) return '';
+  const reg = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = str.match(reg);
+  return match ? match[1] : str;
+}
+
+function abrirPlaylistVideos(m){
+  document.getElementById('video-title').textContent = 'Aulas: ' + m.nome;
+  const playlist = document.getElementById('video-playlist');
+  
+  playlist.innerHTML = m.videos.map((vid, idx) => `
+    <button type="button" class="video-item ${idx === 0 ? 'active' : ''}" onclick="selecionarVideo('${extrairYoutubeId(vid.id)}', this)">
+      <span>▶</span> <span>${vid.titulo || `Aula ${idx + 1}`}</span>
+    </button>
+  `).join('');
+
+  if(m.videos.length > 0) {
+    const firstId = extrairYoutubeId(m.videos[0].id);
+    document.getElementById('video-box').innerHTML = `<iframe src="https://www.youtube.com/embed/${firstId}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+  }
+
+  navigateTo('video');
+}
+
+window.selecionarVideo = function(ytId, btnElement){
+  document.querySelectorAll('.video-item').forEach(el => el.classList.remove('active'));
+  btnElement.classList.add('active');
+  document.getElementById('video-box').innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+};
+
+document.getElementById('btn-video-back').addEventListener('click', () => {
+  document.getElementById('video-box').innerHTML = '';
+  window.history.back();
+});
+document.getElementById('btn-video-go-quiz').addEventListener('click', () => {
+  document.getElementById('video-box').innerHTML = '';
+  abrirSetupRodada(selectedSlug);
+});
+
+// ═══════════════════════════════════════════════════════
+//  CONFIGURAÇÃO DA RODADA (APENAS NÃO DOMINADAS)
+// ═══════════════════════════════════════════════════════
+function abrirSetupRodada(slug){
+  selectedSlug = slug;
+  const m = materiasData[slug];
+
+  const pendentes = (m.questions || []).filter(q => !questaoJaDominada(slug, q.id));
+
+  if(pendentes.length === 0){
+    toast('Você já dominou todas as questões! Use a opção de reiniciar para revisar.', 'info');
+    document.getElementById('modal-confirm-reset').classList.add('show');
+    return;
+  }
+
+  document.getElementById('setup-mat-name').textContent = m.nome;
+  document.getElementById('setup-mat-meta').textContent = `${pendentes.length} questões pendentes para dominar`;
+  document.getElementById('setup-streak').textContent = statsAtivo.streak;
+  document.getElementById('setup-level').textContent = statsAtivo.nivel;
+  document.getElementById('setup-spine').style.background = 'var(--coral)';
+
+  const opcs = [10, 20, 30].filter(n => n < pendentes.length);
+  opcs.push(pendentes.length);
+  setupQty = opcs[0];
+
+  const grid = document.getElementById('qty-grid');
+  grid.innerHTML = opcs.map(n => `
+    <button type="button" class="qty-chip ${n === setupQty ? 'sel' : ''}" onclick="escolherQtd(this, ${n})">
+      <span class="qty-n">${n}</span>
+      <span class="qty-l">${n === pendentes.length ? 'todas pendentes' : 'questões'}</span>
+    </button>
+  `).join('');
+
+  navigateTo('setup');
+}
+
+window.escolherQtd = function(btn, q){
+  setupQty = q;
+  document.querySelectorAll('.qty-chip').forEach(c => c.classList.remove('sel'));
+  btn.classList.add('sel');
+  SOM.click();
+};
+
+document.getElementById('btn-setup-back').addEventListener('click', () => window.history.back());
+
+document.getElementById('btn-comecar').addEventListener('click', () => {
+  const m = materiasData[selectedSlug];
+  const pendentes = m.questions.filter(q => !questaoJaDominada(selectedSlug, q.id));
+
+  const pool = [...pendentes].sort(() => Math.random() - .5).slice(0, setupQty);
+  quizQueue = [...pool];
+  quizIndex = 0;
+  sessionCorrect = 0;
+  sessionTotal = quizQueue.length;
+  sessionXP = 0;
+  sessionRetry = [];
+  answered = false;
+
+  document.getElementById('quiz-streak').textContent = statsAtivo.streak;
+  document.getElementById('quiz-level').textContent = statsAtivo.nivel;
+  
+  SOM.click();
+  navigateTo('quiz');
+  renderQuestaoAtual();
+});
+
+// ═══════════════════════════════════════════════════════
+//  QUIZ E REPETIÇÃO DE ERROS ATÉ ACERTAR
+// ═══════════════════════════════════════════════════════
+function renderQuestaoAtual(){
+  const q = quizQueue[quizIndex];
+  if (!q) return;
+
+  document.getElementById('quiz-correct').textContent = sessionCorrect;
+  document.getElementById('quiz-eyebrow').textContent = q.__retry 
+    ? '↻ Revisando Questão com Erro' 
+    : `${materiasData[selectedSlug]?.nome || 'Exercício'} · Questão ${quizIndex + 1}/${quizQueue.length}`;
+  document.getElementById('quiz-question').textContent = q.pergunta;
+
+  renderTrailDots();
+
+  const opts = document.getElementById('quiz-options');
+  if(q.type === 'certo_errado'){
+    opts.innerHTML = `
+      <button type="button" class="option" data-k="certo"><span class="opt-l"><span class="opt-k">C</span>Certo</span><span></span></button>
+      <button type="button" class="option" data-k="errado"><span class="opt-l"><span class="opt-k">E</span>Errado</span><span></span></button>
+    `;
+  } else {
+    opts.innerHTML = (q.options || []).map(o => `
+      <button type="button" class="option" data-k="${o.key}">
+        <span class="opt-l"><span class="opt-k">${String(o.key).toUpperCase()}</span>${o.label}</span>
+        <span></span>
+      </button>
+    `).join('');
+  }
+
+  const buttons = opts.querySelectorAll('.option');
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      responderQuestao(btn.dataset.k);
+    });
+  });
+
+  const ansArea = document.getElementById('quiz-answer-area');
+  ansArea.classList.add('hidden');
+  ansArea.innerHTML = '';
+}
+
+function renderTrailDots(){
+  const trail = document.getElementById('quiz-trail');
+  trail.innerHTML = Array.from({ length: sessionTotal }, (_, i) => {
+    const cls = i < sessionCorrect ? 'done' : (i === sessionCorrect ? 'cur' : '');
+    const sz = i === sessionCorrect ? 12 : 8;
+    return `<div class="trail-dot ${cls}" style="width:${sz}px;height:${sz}px"></div>`;
+  }).join('');
+}
+
+function responderQuestao(key){
+  if(answered) return;
+  answered = true;
+  const q = quizQueue[quizIndex];
+  const acertou = (key === q.correct);
+
+  if(acertou){
+    SOM.acerto();
+    sessionCorrect++;
+    sessionXP += 10;
+    statsAtivo.xp += 10;
+    statsAtivo.total_acertos++;
+
+    // Questão dominada: não volta mais
+    marcarQuestaoDominada(selectedSlug, q.id);
+  } else {
+    SOM.erro();
+    sessionXP += 2;
+    statsAtivo.xp += 2;
+    // Questão errada repete no fim da rodada até ser acertada
+    sessionRetry.push({ ...q, __retry: true });
+  }
+
+  statsAtivo.total_respondidas++;
+  statsAtivo.nivel = Math.floor(statsAtivo.xp / 100) + 1;
+  salvarStats();
+
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.classList.add('answered');
+    btn.disabled = true;
+    const k = btn.dataset.k;
+    const ic = btn.querySelector('span:last-child');
+    if(k === q.correct){
+      btn.classList.add('correct');
+      ic.innerHTML = '✔';
+    } else if(k === key){
+      btn.classList.add('wrong', 'shake');
+      ic.innerHTML = '✖';
+    } else {
+      btn.classList.add('faded');
+    }
+  });
+
+  document.getElementById('quiz-correct').textContent = sessionCorrect;
+
+  let html = '';
+  if(!acertou && q.explicacao){
+    html += `<div class="postit anim-slide"><p class="pl">💡 Explicação</p><p class="pt">${q.explicacao}</p></div>`;
+  }
+  html += `<button type="button" class="btn-prim anim-slide" id="btn-next-q" style="background:var(--ink)">Continuar ➔</button>`;
+
+  const ansArea = document.getElementById('quiz-answer-area');
+  ansArea.innerHTML = html;
+  ansArea.classList.remove('hidden');
+
+  document.getElementById('btn-next-q').addEventListener('click', avancaProximaQuestao);
+}
+
+function avancaProximaQuestao(){
+  if(quizIndex + 1 < quizQueue.length){
+    quizIndex++;
+    answered = false;
+    renderQuestaoAtual();
+  } else if(sessionRetry.length > 0){
+    quizQueue.push(...sessionRetry);
+    sessionRetry = [];
+    quizIndex++;
+    answered = false;
+    toast('Refazendo as questões que você errou!', 'info');
+    renderQuestaoAtual();
+  } else {
+    SOM.conclusao();
+    mostrarResultadoFinal();
+  }
+}
+
+function mostrarResultadoFinal(){
+  document.getElementById('result-materia').textContent = materiasData[selectedSlug].nome;
+  document.getElementById('result-score').textContent = `${sessionCorrect}/${sessionTotal}`;
+  document.getElementById('result-xp').textContent = `+${sessionXP} XP`;
+  navigateTo('result');
+}
+
+document.getElementById('btn-result-home').addEventListener('click', () => {
+  renderHomeStats();
+  renderHomeMaterias();
+  navigateTo('home');
+});
+document.getElementById('btn-retry').addEventListener('click', () => abrirSetupRodada(selectedSlug));
+
+// ═══════════════════════════════════════════════════════
+//  MODAL DE SAÍDA DO QUIZ
+// ═══════════════════════════════════════════════════════
+document.getElementById('btn-quiz-sair').addEventListener('click', () => {
+  document.getElementById('modal-confirm-exit').classList.add('show');
+});
+document.getElementById('btn-exit-cancel').addEventListener('click', () => {
+  document.getElementById('modal-confirm-exit').classList.remove('show');
+});
+document.getElementById('btn-exit-ok').addEventListener('click', () => {
+  document.getElementById('modal-confirm-exit').classList.remove('show');
+  renderHomeStats();
+  renderHomeMaterias();
+  navigateTo('home');
+});
+
+// ═══════════════════════════════════════════════════════
+//  INICIALIZAÇÃO AUTOMÁTICA
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  carregarStats();
+  await fetchGithubMaterias();
+  navigateTo('home');
+});
+</script>
+</body>
+</html>
