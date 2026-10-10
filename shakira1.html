@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz Shakira – Ranking</title>
+<style>
+:root{--bg:#1a0826;--bg2:#3b0a4a;--gold:#ffc83d;--pink:#ff3d8b;--ink:#fff;--card:rgba(255,255,255,.09);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:radial-gradient(circle at 20% 0,var(--bg2),var(--bg) 70%) fixed;overflow-x:hidden}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+h1{font-family:Georgia,serif;font-size:2.2rem;margin:.2em 0;text-align:center;background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;margin:12px 0;backdrop-filter:blur(6px)}
+.hero{text-align:center;position:relative}
+.photo{width:170px;height:170px;border-radius:50%;margin:8px auto;border:4px solid var(--gold);overflow:hidden;animation:sway 2.4s ease-in-out infinite;box-shadow:0 0 30px var(--pink);background:#2a0b36}
+.photo svg,.photo img{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes sway{0%,100%{transform:rotate(-5deg) translateX(-6px)}50%{transform:rotate(5deg) translateX(6px)}}
+.note{font-size:.78rem;opacity:.7}
+input[type=text]{width:100%;padding:12px;border-radius:12px;border:2px solid var(--gold);background:#0006;color:#fff;font-size:1rem;margin:8px 0}
+button{cursor:pointer;font:inherit;border:0;border-radius:14px;padding:12px 18px;color:#1a0826;background:linear-gradient(90deg,var(--gold),#ff9d3d);font-weight:700;transition:transform .15s}
+button:hover{transform:scale(1.04)}
+.opt{display:block;width:100%;margin:8px 0;text-align:left;color:#fff;background:#ffffff1c;border:2px solid #ffffff33}
+.opt.ok{background:#1fa95b;border-color:#7dffb0;animation:pop .4s}
+.opt.bad{background:#c22a4a;border-color:#ff8aa5;animation:shake .4s}
+@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.bar{height:8px;background:#fff3;border-radius:6px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--pink));transition:width .3s}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;gap:8px}
+.timer{font-weight:700;color:var(--gold)}
+ol{padding:0;margin:0;list-style:none}
+li.r{display:flex;gap:10px;align-items:center;padding:8px 6px;border-bottom:1px solid #fff2}
+li.r b{width:2em}
+li.r span{flex:1;overflow:hidden;text-overflow:ellipsis}
+.hide{display:none}
+.big{font-size:2.6rem;text-align:center;margin:0}
+.notes{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.notes i{position:absolute;bottom:-40px;font-style:normal;opacity:.35;animation:up linear infinite}
+@keyframes up{to{transform:translateY(-115vh) rotate(40deg)}}
+.wrap{position:relative;z-index:1}
+.mute{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;z-index:5;padding:8px 12px}
+</style></head><body>
+<div class="notes" id="notes"></div>
+<button class="mute" id="mute" title="Som">🔊</button>
+<div class="wrap">
+<h1>💃 Quiz Shakira 🎶</h1>
+
+<div id="home" class="card hero">
+  <div class="photo" id="photo"><svg viewBox="0 0 200 200"><defs><radialGradient id="g" cx=".5" cy=".4"><stop offset="0" stop-color="#ff7ab5"/><stop offset="1" stop-color="#4a1060"/></radialGradient></defs><rect width="200" height="200" fill="url(#g)"/><path d="M100 22c-42 0-62 34-56 78 4 30-8 52-22 70 22 6 40 2 52-12h52c12 14 30 18 52 12-14-18-26-40-22-70 6-44-14-78-56-78z" fill="#e8a317"/><path d="M60 90q10-45 40-45t40 45v30q0 40-40 46-40-6-40-46z" fill="#f0c9a0"/><path d="M58 80q42-50 84 0q-20-22-42-22t-42 22z" fill="#e8a317"/><circle cx="82" cy="108" r="5" fill="#3a1c0a"/><circle cx="118" cy="108" r="5" fill="#3a1c0a"/><path d="M84 138q16 14 32 0" stroke="#c2185b" stroke-width="5" fill="none" stroke-linecap="round"/></svg></div>
+  <div class="note">Ilustração estilizada · <label style="text-decoration:underline;cursor:pointer">usar minha foto<input type="file" id="file" accept="image/*" hidden></label></div>
+  <p>50 perguntas sobre a Shakira. Cada rodada sorteia <b>5</b> — acerte, seja rápido e entre no ranking!</p>
+  <input type="text" id="name" maxlength="18" placeholder="Seu nome">
+  <button id="start">▶ Começar</button>
+</div>
+
+<div id="game" class="card hide">
+  <div class="top"><span id="prog"></span><span class="timer" id="tm"></span><span id="sc"></span></div>
+  <div class="bar"><i id="bar"></i></div>
+  <h2 id="q" style="margin:.6em 0"></h2>
+  <div id="opts"></div>
+  <div id="fb" style="min-height:1.4em;font-weight:700"></div>
+</div>
+
+<div id="end" class="card hide hero">
+  <p class="big" id="emoji"></p>
+  <h2 id="res"></h2>
+  <button id="again">🔁 Jogar de novo</button>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">🏆 Ranking</h2>
+  <div class="note" id="rnote"></div>
+  <ol id="rank"></ol>
+</div>
+</div>
+
+<script>
+// pergunta, [opções], índice da correta
+const Q=[
+["Em que cidade a Shakira nasceu?",["Barranquilla","Bogotá","Medellín","Cartagena"],0],
+["Qual é o nome completo dela?",["Shakira Isabel Mebarak Ripoll","Shakira Maria Pérez Gómez","Isabel Shakira Torres","Shakira Ripoll Chadid"],0],
+["Em que ano a Shakira nasceu?",["1975","1977","1980","1983"],1],
+["Qual foi seu primeiro álbum, lançado em 1991?",["Magia","Pies Descalzos","Laundry Service","Sale el Sol"],0],
+["Qual álbum de 1995 a tornou conhecida na América Latina?",["Pies Descalzos","Magia","Fijación Oral","El Dorado"],0],
+["Qual foi o seu primeiro álbum em inglês (2001)?",["Laundry Service","She Wolf","Shakira","Dónde Están los Ladrones?"],0],
+["Qual música de 2001 diz 'Whenever' no título?",["Whenever, Wherever","Anywhere, Anytime","Always, Forever","Wherever, Whenever You Go"],0],
+["Quem participa de 'Hips Don't Lie'?",["Wyclef Jean","Pitbull","Maluma","Rihanna"],0],
+["Qual música foi o hit da Copa do Mundo de 2010?",["Waka Waka (This Time for Africa)","Loca","Gypsy","Rabiosa"],0],
+["Onde foi a Copa do Mundo de 2010?",["África do Sul","Brasil","Alemanha","Rússia"],0],
+["Em que evento ela se apresentou em 2020 com Jennifer Lopez?",["Super Bowl LIV","Grammy Awards","Oscar","Rock in Rio"],0],
+["Qual produtor argentino lançou a Bzrp Music Sessions Vol. 53 com ela?",["Bizarrap","Tiësto","Calvin Harris","Mark Ronson"],0],
+["Qual álbum de 2024 tem 'Las Mujeres Ya No Lloran' no título?",["Las Mujeres Ya No Lloran","El Dorado","Sale el Sol","Oral Fixation"],0],
+["Como se chama a fundação criada por ela na Colômbia?",["Pies Descalzos","Magia","Ojos Así","Sale el Sol"],0],
+["Qual música de 2010 é uma das mais famosas do álbum Sale el Sol?",["Loca","Chantaje","Antología","Estoy Aquí"],0],
+["Qual álbum tem a faixa 'She Wolf'?",["She Wolf","El Dorado","Pies Descalzos","Magia"],0],
+["Com qual cantor espanhol ela gravou 'La Tortura'?",["Alejandro Sanz","Enrique Iglesias","Julio Iglesias","Miguel Bosé"],0],
+["Com qual cantor colombiano ela gravou 'Chantaje' (2016)?",["Maluma","J Balvin","Ozuna","Nicky Jam"],0],
+["Qual cantora cantou com ela em 'Can't Remember to Forget You'?",["Rihanna","Beyoncé","Lady Gaga","Katy Perry"],0],
+["Em qual filme da Disney ela dublou a gazela Gazelle?",["Zootopia","Moana","Frozen","Encanto"],0],
+["Qual música do filme Zootopia ela canta?",["Try Everything","Let It Go","Waka Waka","Loca"],0],
+["Em qual programa de TV americano ela foi técnica em 2013?",["The Voice","American Idol","The X Factor","America's Got Talent"],0],
+["Qual a nacionalidade da Shakira?",["Colombiana","Mexicana","Argentina","Espanhola"],0],
+["De qual origem é a família do pai dela?",["Libanesa","Italiana","Japonesa","Russa"],0],
+["Que tipo de dança ela mistura com seu estilo, vinda de suas raízes árabes?",["Dança do ventre","Flamenco","Balé","Valsa"],0],
+["Qual o nome do álbum de 2017 da Shakira?",["El Dorado","Fijación Oral","Sale el Sol","Magia"],0],
+["Com qual cantor ela gravou 'Perro Fiel' (2017)?",["Nicky Jam","Wisin","Daddy Yankee","Bad Bunny"],0],
+["Com qual cantor colombiano ela gravou 'La Bicicleta'?",["Carlos Vives","Juanes","Fonseca","Maluma"],0],
+["Com qual cantor ela gravou 'Monotonía' (2022)?",["Ozuna","Anuel AA","Farruko","Myke Towers"],0],
+["Com qual cantor ela lançou 'Te Felicito' (2022)?",["Rauw Alejandro","Feid","Sebastián Yatra","Camilo"],0],
+["Com qual cantora ela gravou 'TQG' (2023)?",["Karol G","Becky G","Anitta","Rosalía"],0],
+["Qual música de 2024 ela dedicou a seus filhos?",["Acróstico","Soltera","Puntería","Copa Vacía"],0],
+["Com qual grupo ela gravou 'Girl Like Me' (2020)?",["Black Eyed Peas","Maroon 5","Coldplay","Imagine Dragons"],0],
+["Em qual país foi a Copa de 2014, em que ela cantou 'La La La'?",["Brasil","Argentina","África do Sul","Catar"],0],
+["Qual estrela da Calçada da Fama de Hollywood ela ganhou em 2009?",["Uma estrela","Duas estrelas","Nenhuma","Três estrelas"],0],
+["Quantos filhos a Shakira tem?",["2","1","3","4"],0],
+["Quais os nomes dos filhos dela?",["Milan e Sasha","Lucas e Pedro","Mateo e Gael","Diego e Santi"],0],
+["Em qual time de futebol jogava o ex-companheiro dela, Piqué, quando começaram a namorar?",["FC Barcelona","Real Madrid","Manchester United","Milan"],0],
+["Qual música de 2005 faz parte do álbum Fijación Oral Vol. 1?",["La Tortura","Loca","Chantaje","Antología"],0],
+["Qual álbum inclui 'Underneath Your Clothes'?",["Laundry Service","El Dorado","She Wolf","Magia"],0],
+["Qual música de 2007 ela gravou com Beyoncé?",["Beautiful Liar","Run the World","Halo","Crazy in Love"],0],
+["Qual música de 2011 tem o rapper dominicano El Cata?",["Rabiosa","Loca","Gypsy","Empire"],0],
+["Qual música tem as palavras 'Ojos Así' no título?",["Ojos Así","Ciega","Inevitable","Antología"],0],
+["Em qual língua ela canta 'Hips Don't Lie' no refrão e versos?",["Inglês e espanhol","Só francês","Só italiano","Só árabe"],0],
+["Qual faixa de 2024 tem a participação de Cardi B?",["Puntería","Soltera","Acróstico","Cómo Dónde y Cuándo"],0],
+["Com qual grupo mexicano ela gravou 'El Jefe' (2024)?",["Fuerza Regida","Los Tigres del Norte","Grupo Frontera","Banda MS"],0],
+["Com qual cantor ela gravou 'Copa Vacía' (2024)?",["Manuel Turizo","Sebastián Yatra","Camilo","Feid"],0],
+["Qual dessas músicas é de Pies Descalzos?",["Estoy Aquí","Waka Waka","Chantaje","Try Everything"],0],
+["Em qual língua o nome 'Shakira' significa 'mulher cheia de graça'?",["Árabe","Latim","Grego","Hebraico"],0],
+["Qual idioma, além de espanhol e inglês, a Shakira fala?",["Português","Mandarim","Russo","Japonês"],0]
+];
+const $=id=>document.getElementById(id);
+// ---------- áudio (sintetizado, original) ----------
+let ac,muted=false,musicOn=false,step=0,timer;
+function A(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();return ac}
+function tone(f,t,d,type="triangle",v=.12){const c=A(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}
+function sfx(ok){if(muted)return;const t=A().currentTime;(ok?[523,659,784,1047]:[300,220]).forEach((f,i)=>tone(f,t+i*.09,.18,ok?"triangle":"sawtooth",.1))}
+const mel=[440,0,523,587,659,0,587,523,440,0,392,440,494,0,440,0],bass=[110,110,147,147,131,131,110,110];
+function music(){if(musicOn)return;musicOn=true;setInterval(()=>{if(muted)return;const c=A(),t=c.currentTime;const m=mel[step%16];if(m)tone(m,t,.28,"triangle",.08);if(step%2==0)tone(bass[(step/2|0)%8],t,.3,"sine",.14);if(step%4==2)tone(900,t,.04,"square",.03);if(step%8==4)tone(160,t,.12,"sine",.2);step++},210)}
+$("mute").onclick=()=>{muted=!muted;$("mute").textContent=muted?"🔇":"🔊";music()};
+// notas flutuantes
+for(let i=0;i<16;i++){const e=document.createElement("i");e.textContent=["🎶","💃","🎵","🇨🇴","✨"][i%5];e.style.cssText=`left:${Math.random()*100}%;font-size:${20+Math.random()*26}px;animation-duration:${9+Math.random()*10}s;animation-delay:-${Math.random()*14}s`;$("notes").appendChild(e)}
+// foto local
+$("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$("photo").innerHTML='<img alt="Foto" src="'+r.result+'">'};r.readAsDataURL(f)};
+// ---------- jogo ----------
+let rounds,idx,score,hits,left,locked,player;
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+$("start").onclick=()=>{player=($("name").value||"").trim();if(!player){$("name").focus();return}music();begin()};
+$("again").onclick=begin;
+function begin(){rounds=sh(Q).slice(0,5);idx=0;score=0;hits=0;$("home").classList.add("hide");$("end").classList.add("hide");$("game").classList.remove("hide");show()}
+function show(){locked=false;const [q,o,c]=rounds[idx];$("q").textContent=q;$("fb").textContent="";$("prog").textContent=`Pergunta ${idx+1}/5`;$("sc").textContent=`⭐ ${score}`;$("bar").style.width=(idx/5*100)+"%";
+ const box=$("opts");box.innerHTML="";sh(o.map((t,i)=>[t,i])).forEach(([t,i])=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>pick(b,i===c);b.dataset.ok=i===c;box.appendChild(b)});
+ left=20;tick();clearInterval(timer);timer=setInterval(()=>{left--;tick();if(left<=0)pick(null,false)},1000)}
+function tick(){$("tm").textContent="⏱ "+left+"s"}
+function pick(b,ok){if(locked)return;locked=true;clearInterval(timer);
+ document.querySelectorAll(".opt").forEach(x=>{if(x.dataset.ok==="true")x.classList.add("ok")});
+ if(b&&!ok)b.classList.add("bad");
+ if(ok){hits++;score+=100+left*5;$("fb").textContent="🎉 Acertou! +"+(100+left*5)}else $("fb").textContent=b?"😢 Errou!":"⏰ Tempo esgotado!";
+ sfx(ok);$("sc").textContent=`⭐ ${score}`;setTimeout(()=>{idx++;idx<5?show():finish()},1400)}
+function finish(){$("game").classList.add("hide");$("end").classList.remove("hide");
+ $("emoji").textContent=hits==5?"👑":hits>=3?"💃":"🎤";$("res").textContent=`${player}: ${hits}/5 acertos · ${score} pontos`;
+ if(!muted)[523,659,784,659,784,1047].forEach((f,i)=>tone(f,A().currentTime+i*.12,.2));save()}
+// ---------- ranking ----------
+let db=null,uid="anon",shared=[];
+function local(){try{return JSON.parse(localStorage.getItem("shk-rank")||"[]")}catch(e){return[]}}
+function render(){const L=(db?shared:local()).slice().sort((a,b)=>b.score-a.score).slice(0,20);
+ $("rnote").textContent=db?"Ranking compartilhado com todos os jogadores":"Ranking salvo neste aparelho";
+ $("rank").innerHTML=L.length?"":"<li class='r'>Ninguém jogou ainda — seja o primeiro!</li>";
+ L.forEach((e,i)=>{const li=document.createElement("li");li.className="r";const m=["🥇","🥈","🥉"][i]||i+1;li.innerHTML="<b></b><span></span><em></em>";li.children[0].textContent=m;li.children[1].textContent=e.name;li.children[2].textContent=e.score+" pts · "+e.hits+"/5";$("rank").appendChild(li)})}
+async function save(){const e={name:player,score,hits,t:Date.now()};
+ try{const l=local();l.push(e);localStorage.setItem("shk-rank",JSON.stringify(l.sort((a,b)=>b.score-a.score).slice(0,50)))}catch(x){}
+ if(db){try{await db.doc("ranking/"+uid+"_"+e.t).set(e)}catch(x){}}render()}
+(async()=>{render();try{const [d,u]=await Promise.all([claude.use("db"),claude.use("user")]);if(!d)return;
+ if(u){try{uid=String(await u.id())}catch(x){}}
+ db=d;d.collection("ranking").orderBy("score","desc").limit(20).onSnapshot(s=>{const docs=s.docs||[];shared=docs.map(x=>x.data());render()},()=>{db=null;render()});render()}catch(x){db=null}})();
+</script></body></html>
