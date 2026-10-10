@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shakira Ultimate Quiz & Leaderboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Montserrat & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        },
+                        shakira: {
+                            pink: '#ff2a85',
+                            purple: '#8b00ff',
+                            dark: '#0f0920',
+                            card: '#1a103c',
+                            gold: '#ffd700'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'bounce-short': 'bounceShort 0.5s ease infinite alternate',
+                        'float': 'float 4s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(255, 42, 133, 0.4)' },
+                            '100%': { boxShadow: '0 0 30px rgba(255, 215, 0, 0.8)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at top center, #2c0b4e 0%, #0f0920 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff2a3 0%, #ffd700 50%, #cca000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pink-gradient-text {
+            background: linear-gradient(135deg, #ff7bb0 0%, #ff2a85 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-card {
+            background: rgba(26, 16, 60, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .option-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            border-color: #ff2a85;
+            box-shadow: 0 8px 25px rgba(255, 42, 133, 0.3);
+        }
+
+        .correct-anim {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+            border-color: #34d399 !important;
+            color: white !important;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .wrong-anim {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+            border-color: #fca5a5 !important;
+            color: white !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Custom Scrollbar for Ranking Table */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 9, 32, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff2a85;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between relative selection:bg-pink-500 selection:text-white">
+
+    <!-- Top Header Bar -->
+    <header class="w-full py-4 px-6 flex justify-between items-center max-w-5xl mx-auto z-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 p-0.5 flex items-center justify-center shadow-lg">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=150&q=80" alt="Shakira Icon" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="font-display font-extrabold text-xl tracking-wider gold-gradient-text uppercase">Shakira Quiz</span>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Audio Toggle Button -->
+            <button id="btn-sound" onclick="toggleSound()" class="px-3 py-2 rounded-full glass-card hover:bg-white/10 text-xs font-semibold flex items-center gap-2 border border-white/20 transition-all text-yellow-300">
+                <i id="sound-icon" class="fa-solid fa-volume-high text-pink-400"></i>
+                <span id="sound-text" class="hidden sm:inline">Som ON</span>
+            </button>
+            <button id="btn-music" onclick="toggleMusic()" class="px-3 py-2 rounded-full glass-card hover:bg-white/10 text-xs font-semibold flex items-center gap-2 border border-white/20 transition-all text-pink-300">
+                <i id="music-icon" class="fa-solid fa-music text-yellow-400"></i>
+                <span id="music-text" class="hidden sm:inline">Música</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center p-4 z-10">
+        <div class="w-full max-w-2xl">
+
+            <!-- TELA 1: WELCOME SCREEN -->
+            <section id="screen-welcome" class="glass-card rounded-3xl p-6 sm:p-10 text-center animate-fadeIn relative overflow-hidden">
+                <!-- Glowing Backdrop Effect -->
+                <div class="absolute -top-20 -left-20 w-48 h-48 bg-pink-600/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-yellow-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10">
+                    <!-- Singer Cover Image -->
+                    <div class="relative w-36 h-36 sm:w-44 sm:h-44 mx-auto mb-6 rounded-full p-1 bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 shadow-2xl animate-float">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Shakira_2014_%28cropped%29.jpg/640px-Shakira_2014_%28cropped%29.jpg" 
+                             alt="Shakira" 
+                             onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=500&q=80'"
+                             class="w-full h-full object-cover rounded-full shadow-inner">
+                        <div class="absolute bottom-1 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full shadow">👑 Pop Queen</div>
+                    </div>
+
+                    <h1 class="font-display text-3xl sm:text-5xl font-black mb-3 tracking-tight">
+                        Quanto você sabe sobre a <span class="gold-gradient-text">Shakira</span>?
+                    </h1>
+                    <p class="text-gray-300 text-sm sm:text-base mb-8 max-w-md mx-auto leading-relaxed">
+                        Testes seus conhecimentos sobre os hits, prêmios e curiosidades da rainha latina. Responda <strong class="text-pink-400">5 perguntas</strong> aleatórias e entre para o Ranking Global!
+                    </p>
+
+                    <!-- Player Name Input -->
+                    <div class="max-w-sm mx-auto mb-6">
+                        <label for="player-name" class="block text-left text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2 pl-1">Seu Nome ou Apelido:</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user text-pink-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="player-name" placeholder="Ex: WakaWakaFan" maxlength="15"
+                                   class="w-full bg-white/5 border border-white/20 rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-gray-400 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/50 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-sm mx-auto">
+                        <button onclick="startQuiz()" class="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-yellow-500 font-display font-bold text-lg text-white shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Iniciar Quiz
+                        </button>
+                        <button onclick="showRankingModal()" class="w-full sm:w-auto py-4 px-6 rounded-2xl glass-card hover:bg-white/10 font-semibold text-gray-200 border border-white/20 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trophy text-yellow-400"></i> Ranking
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 2: QUIZ SCREEN -->
+            <section id="screen-quiz" class="glass-card rounded-3xl p-6 sm:p-8 hidden relative overflow-hidden">
+                <!-- Header Info / Progress -->
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-pink-400 bg-pink-950/60 border border-pink-500/30 px-3 py-1 rounded-full">
+                        Pergunta <span id="current-q-num">1</span> / 5
+                    </span>
+                    <div class="flex items-center space-x-2 text-yellow-400 text-sm font-bold bg-yellow-950/40 border border-yellow-500/30 px-3 py-1 rounded-full">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="quiz-timer">00s</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-white/10 rounded-full h-2.5 mb-6 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-yellow-400 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+
+                <!-- Question Box -->
+                <div class="mb-8 min-h-[90px] flex items-center justify-center text-center">
+                    <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-white leading-snug">
+                        Carregando pergunta...
+                    </h2>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 gap-3.5 mb-6">
+                    <!-- Dinamicamente preenchido via JS -->
+                </div>
+
+                <!-- Live Feedback & Next Button -->
+                <div id="feedback-box" class="min-h-[50px] flex items-center justify-between opacity-0 transition-opacity duration-300 bg-white/5 rounded-2xl p-3 border border-white/10">
+                    <div id="feedback-msg" class="font-semibold text-sm flex items-center gap-2"></div>
+                    <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold text-sm shadow hover:opacity-90 transition-all flex items-center gap-1">
+                        Próxima <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TELA 3: RESULT SCREEN -->
+            <section id="screen-result" class="glass-card rounded-3xl p-6 sm:p-10 text-center hidden animate-fadeIn">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-yellow-500/20 border border-yellow-400/40 flex items-center justify-center text-yellow-400 text-3xl shadow-inner">
+                    <i id="result-icon" class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h2 id="result-title" class="font-display text-3xl font-extrabold mb-1 gold-gradient-text">Incrível!</h2>
+                <p id="result-subtitle" class="text-gray-300 text-sm mb-6">Você completou o Quiz da Shakira!</p>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <div class="bg-white/5 border border-white/10 p-3 rounded-2xl">
+                        <span class="block text-xs text-gray-400 uppercase font-semibold">Acertos</span>
+                        <span id="res-score" class="text-2xl font-black text-pink-400">0/5</span>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-3 rounded-2xl">
+                        <span class="block text-xs text-gray-400 uppercase font-semibold">Tempo</span>
+                        <span id="res-time" class="text-2xl font-black text-yellow-400">0s</span>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-3 rounded-2xl">
+                        <span class="block text-xs text-gray-400 uppercase font-semibold">Pontos</span>
+                        <span id="res-points" class="text-2xl font-black text-emerald-400">0</span>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Preview In Result -->
+                <div class="mb-8 text-left">
+                    <h3 class="font-display font-bold text-lg mb-3 text-white flex items-center justify-between">
+                        <span><i class="fa-solid fa-list-ol text-pink-400 mr-2"></i> Classificação Top 5</span>
+                        <span class="text-xs font-normal text-gray-400">Salvo no Navegador</span>
+                    </h3>
+                    <div class="overflow-x-auto rounded-2xl border border-white/10 bg-black/30">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-white/5 text-gray-400 uppercase text-[10px] tracking-wider">
+                                <tr>
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">Jogador</th>
+                                    <th class="p-3 text-center">Acertos</th>
+                                    <th class="p-3 text-right">Pontos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="result-leaderboard-body" class="divide-y divide-white/5">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="startQuiz()" class="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500 to-yellow-500 font-bold text-white shadow-lg hover:brightness-110 active:scale-95 transition-all">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Jogar Novamente
+                    </button>
+                    <button onclick="resetAndHome()" class="py-3.5 px-6 rounded-2xl glass-card hover:bg-white/10 font-semibold text-gray-300 border border-white/20 transition-all">
+                        <i class="fa-solid fa-house mr-1"></i> Início
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- RANKING MODAL -->
+    <div id="modal-ranking" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
+        <div class="glass-card rounded-3xl w-full max-w-lg p-6 relative border border-white/20 shadow-2xl">
+            <button onclick="closeRankingModal()" class="absolute top-5 right-5 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="inline-block p-3 rounded-full bg-yellow-500/20 text-yellow-400 text-2xl mb-2">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="font-display font-extrabold text-2xl text-white">Ranking de Jogadores</h3>
+                <p class="text-xs text-gray-400">Melhores pontuações registradas</p>
+            </div>
+
+            <!-- Table -->
+            <div class="max-h-64 overflow-y-auto rounded-2xl border border-white/10 bg-black/40 mb-6">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-white/10 sticky top-0 text-gray-300 text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="p-3">Pos</th>
+                            <th class="p-3">Nome</th>
+                            <th class="p-3 text-center">Acertos</th>
+                            <th class="p-3 text-center">Tempo</th>
+                            <th class="p-3 text-right">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="full-leaderboard-body" class="divide-y divide-white/5">
+                        <!-- Conteúdo JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button onclick="clearRanking()" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> Limpar Histórico
+                </button>
+                <button onclick="closeRankingModal()" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 font-semibold text-sm text-white transition-all">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full py-4 text-center text-xs text-gray-400 z-10">
+        Criado com <i class="fa-solid fa-heart text-pink-500 mx-1"></i> para fãs da Shakira.
+    </footer>
+
+    <script>
+        /* =========================================================
+           BANCO DE 50 PERGUNTAS SOBRE A SHAKIRA
+           ========================================================= */
+        const SHAKIRA_QUESTIONS = [
+            {
+                q: "Em qual cidade da Colômbia Shakira nasceu?",
+                options: ["Bogotá", "Barranquilla", "Medellín", "Cali"],
+                answer: 1
+            },
+            {
+                q: "Qual é o nome completo de Shakira?",
+                options: [
+                    "Shakira Isabel Mebarak Ripoll",
+                    "Shakira Maria Gomez Ripoll",
+                    "Shakira Sofia Mebarak Sanchez",
+                    "Shakira Carmen Mebarak Piqué"
+                ],
+                answer: 0
+            },
+            {
+                q: "Qual foi o primeiro álbum oficial de estúdio de grande sucesso internacional de Shakira lançado em 1995?",
+                options: ["Magia", "Peligro", "Pies Descalzos", "Dónde Están los Ladrones?"],
+                answer: 2
+            },
+            {
+                q: "Qual música da Shakira foi a canção oficial da Copa do Mundo da FIFA 2010 na África do Sul?",
+                options: ["La La La", "Hips Don't Lie", "Waka Waka (This Time for Africa)", "Try Everything"],
+                answer: 2
+            },
+            {
+                q: "Em que ano foi lançada a famosa parceria 'BZRP Music Sessions, Vol. 53' com Bizarrap?",
+                options: ["2021", "2022", "2023", "2024"],
+                answer: 2
+            },
+            {
+                q: "Qual hit de Shakira com Wyclef Jean alcançou o topo da Billboard Hot 100 em 2006?",
+                options: ["Whenever, Wherever", "Hips Don't Lie", "La Tortura", "She Wolf"],
+                answer: 1
+            },
+            {
+                q: "Como se chama o primeiro álbum da Shakira em inglês, lançado em 2001?",
+                options: ["Laundry Service", "Oral Fixation Vol. 2", "She Wolf", "Shakira."],
+                answer: 0
+            },
+            {
+                q: "Qual é a tradução da palavra 'Shakira' em árabe?",
+                options: ["Guerreira", "Agradecida ou Cheia de Graça", "Estrela do Mar", "Bela Canto"],
+                answer: 1
+            },
+            {
+                q: "Qual artista porto-riquenho colaborou com Shakira no grande sucesso 'La Tortura' (2005)?",
+                options: ["Ricky Martin", "Alejandro Sanz", "Daddy Yankee", "Luis Fonsi"],
+                answer: 1
+            },
+            {
+                q: "Qual é a ONG criada por Shakira para ajudar crianças vulneráveis na Colômbia?",
+                options: ["Fundación Pies Descalzos", "Fundación Waka Waka", "Fundación Barranquilla", "Fundación América Latina"],
+                answer: 0
+            },
+            {
+                q: "Qual famosa música de Shakira é a cena tema da animação 'Zootopia' da Disney, na qual ela também dubla a personagem Gazelle?",
+                options: ["Chantaje", "Try Everything", "Me Enamoré", "Dare (La La La)"],
+                answer: 1
+            },
+            {
+                q: "Quem dividiu o icônico show do intervalo do Super Bowl LIV em 2020 com Shakira?",
+                options: ["Beyoncé", "Jennifer Lopez", "Rihanna", "Lady Gaga"],
+                answer: 1
+            },
+            {
+                q: "Qual hit de 2016 de Shakira conta com a colaboração do cantor colombiano Maluma?",
+                options: ["Chantaje", "Clandestino", "Trap", "Todas as anteriores"],
+                answer: 3
+            },
+            {
+                q: "Qual é a data de nascimento da Shakira?",
+                options: ["2 de Fevereiro de 1977", "10 de Março de 1980", "20 de Setembro de 1975", "15 de Junho de 1982"],
+                answer: 0
+            },
+            {
+                q: "Qual instrumento musical Shakira é famosa por tocar frequentemente em seus shows além de violão?",
+                options: ["Bateria", "Gaita (Harmônica)", "Piano", "Saxofone"],
+                answer: 1
+            },
+            {
+                q: "Qual música de Shakira traz a famosa frase 'Las mujeres ya no lloran, las mujeres facturan'?",
+                options: ["Monotonía", "TQG", "Bzrp Music Sessions, Vol. 53", "El Jefe"],
+                answer: 2
+            },
+            {
+                q: "Com qual cantora colombiana Shakira colaborou no hit 'TQG' em 2023?",
+                options: ["Anitta", "Karol G", "Rosalía", "Becky G"],
+                answer: 1
+            },
+            {
+                q: "Em qual álbum de Shakira está incluída a faixa romântica 'Antología'?",
+                options: ["Pies Descalzos", "Dónde Están los Ladrones?", "Laundry Service", "Fijación Oral, Vol. 1"],
+                answer: 0
+            },
+            {
+                q: "Qual estilo de dança tradicional do Oriente Médio é uma marca registrada das apresentações de Shakira?",
+                options: ["Samba", "Dança do Ventre", "Flamenco", "Tango"],
+                answer: 1
+            },
+            {
+                q: "Qual foi o álbum conceitual de Shakira lançado em 2009 que traz a temática de lobisomem/empoderamento?",
+                options: ["Oral Fixation", "She Wolf (Loba)", "Sale el Sol", "El Dorado"],
+                answer: 1
+            },
+            {
+                q: "Qual o título do álbum lançado por Shakira em 2024?",
+                options: ["Las Mujeres Ya No Lloran", "El Dorado", "Sale el Sol", "Las Reinas"],
+                answer: 0
+            },
+            {
+                q: "Qual grande festival de música no Reino Unido teve Shakira como headliner em 2010?",
+                options: ["Coachella", "Glastonbury", "Rock in Rio", "Lollapalooza"],
+                answer: 1
+            },
+            {
+                q: "Qual prêmio Shakira recebeu como 'Mulher do Ano' na música latina pela Billboard em 2023?",
+                options: ["Billboard Latin Women in Music", "Grammy Lifetime Award", "Iconic Woman Award", "Latin Heritage Medal"],
+                answer: 0
+            },
+            {
+                q: "Em 'Whenever, Wherever', qual linha da música faz referência aos seus seios de forma bem-humorada?",
+                options: ["Lucky that my breasts are small and humble", "My body is a temple", "Hips don't lie and neither do I", "Feel the rhythm of my heart"],
+                answer: 0
+            },
+            {
+                q: "Qual a ascensão/origem da família paterna de Shakira?",
+                options: ["Italiana", "Libanesa", "Espanhola", "Alemã"],
+                answer: 1
+            },
+            {
+                q: "Qual dueto icônico Shakira gravou com Beyoncé em 2007?",
+                options: ["Beautiful Liar", "Telephone", "Can't Remember to Forget You", "Check on It"],
+                answer: 0
+            },
+            {
+                q: "Qual cantora pop participou do single 'Can't Remember to Forget You' em 2014?",
+                options: ["Katy Perry", "Rihanna", "Lady Gaga", "Britney Spears"],
+                answer: 1
+            },
+            {
+                q: "Quantos prêmios Grammy (versão americana) Shakira já ganhou na carreira (até 2024)?",
+                options: ["1", "3", "7", "10"],
+                answer: 1
+            },
+            {
+                q: "Qual música de Shakira é conhecida por seu clipe gravado no deserto com efeitos de lama dourada?",
+                options: ["Whenever, Wherever", "La Tortura", "Don't Bother", "Gitana"],
+                answer: 0
+            },
+            {
+                q: "Em qual programa de reality show musical dos EUA Shakira atuou como técnica/jurada por duas temporadas?",
+                options: ["American Idol", "The X Factor", "The Voice US", "America's Got Talent"],
+                answer: 2
+            },
+            {
+                q: "Em 'Don't Bother' (2005), qual instrumento musical Shakira destrói ou toca com atitude no clipe?",
+                options: ["Um piano e um carro", "Uma guitarra elétrica", "Uma bateria", "Um violino"],
+                answer: 0
+            },
+            {
+                q: "Qual single da Shakira com Prince Royce lançou a dança da bachata em 2017?",
+                options: ["Déjà Vu", "Monotonía", "Perro Fiel", "Me Enamoré"],
+                answer: 0
+            },
+            {
+                q: "Qual o nome do famoso show acústico da Shakira gravado para a MTV em 1999 que ganhou um Grammy?",
+                options: ["MTV Unplugged", "Live in Miami", "Pies Descalzos Live", "Acoustic Sessions"],
+                answer: 0
+            },
+            {
+                q: "Em qual música Shakira colabora com o grupo Black Eyed Peas em 2020?",
+                options: ["GIRL LIKE ME", "DON'T YOU WORRY", "RITMO", "MAMI"],
+                answer: 0
+            },
+            {
+                q: "Qual o nome da música com inspiração no merengue lançada no álbum 'Sale el Sol' (2010)?",
+                options: ["Loca", "Rabiosa", "Addicted to You", "Todas as alternativas"],
+                answer: 3
+            },
+            {
+                q: "Qual grande tenista espanhol estrelou o clipe romântico da música 'Gitana' (Gypsy) em 2010?",
+                options: ["Carlos Alcaraz", "Rafael Nadal", "Roger Federer", "Novak Djokovic"],
+                answer: 1
+            },
+            {
+                q: "Qual é o nome da música promocional da Copa do Mundo de 2014 gravada por Shakira e Carlinhos Brown?",
+                options: ["Dare (La La La)", "Waka Waka", "Vida", "We Are One"],
+                answer: 0
+            },
+            {
+                q: "Quantos idiomas Shakira consegue falar ou cantar fluentemente?",
+                options: ["Apenas 2", "Pelo menos 5 (Espanhol, Inglês, Português, Italiano, Francês)", "Apenas Espanhol", "3 idiomas"],
+                answer: 1
+            },
+            {
+                q: "Qual faixa do álbum 'El Dorado' (2017) é dedicada ao seu antigo relacionamento com o jogador Piqué?",
+                options: ["Me Enamoré", "Chantaje", "Nada", "Amarillo"],
+                answer: 0
+            },
+            {
+                q: "Qual canção de Shakira com Rauw Alejandro lançada em 2022 tem uma dança de robô marcante?",
+                options: ["Te Felicito", "Monotonía", "TQG", "Copa Vacía"],
+                answer: 0
+            },
+            {
+                q: "Em 'Monotonía' (2022), qual cantor porto-riquenho divide os vocais com Shakira na bachata?",
+                options: ["Ozuna", "Bad Bunny", "Anuel AA", "J Balvin"],
+                answer: 0
+            },
+            {
+                q: "Qual é a cidade natal do pai de Shakira, William Mebarak?",
+                options: ["Beirute (Líbano)", "Nova York (EUA)", "Madri (Espanha)", "Barranquilla (Colômbia)"],
+                answer: 1
+            },
+            {
+                q: "Em 2011, Shakira recebeu uma estrela em qual famosa calçada?",
+                options: ["Calçada da Fama de Hollywood", "Calçada da Fama de Miami", "Passeio de Bogotá", "Las Vegas Walk"],
+                answer: 0
+            },
+            {
+                q: "Qual estilo musical predomina no hit 'La Bicicleta' com Carlos Vives?",
+                options: ["Vallenato / Cumbia Pop", "Reggaeton puro", "Salsa", "Rock alternativo"],
+                answer: 0
+            },
+            {
+                q: "Qual foi o primeiro poema escrito por Shakira aos 4 anos de idade?",
+                options: ["La Rosa de Cristal", "Tus Ojos", "Pies Descalzos", "Mi Guitarra"],
+                answer: 0
+            },
+            {
+                q: "Qual é o nome da grande estátua de bronze inaugurada em homenagem à Shakira em 2023?",
+                options: ["Estátua em Barranquilla", "Monumento de Bogotá", "Estátua do Gramófono", "Monumento a La Loba"],
+                answer: 0
+            },
+            {
+                q: "Qual música de Shakira possui o famoso verso em espanhol 'Si te vas, si te vas, y me dejas aquí'?",
+                options: ["Si Te Vas", "Inevitable", "Ciega, Sordomuda", "Moscas En La Casa"],
+                answer: 0
+            },
+            {
+                q: "Qual instrumento é citado na letra da música 'Ciega, Sordomuda'?",
+                options: ["Mariachi / Trompetes", "Guitarra elétrica", "Acordeão", "Bateria"],
+                answer: 0
+            },
+            {
+                q: "Qual produtor executivo e lendário estúdio produziu seus primeiros álbuns latinos internacionais nos anos 90?",
+                options: ["Emilio Estefan", "Rick Rubin", "Quincy Jones", "Max Martin"],
+                answer: 0
+            },
+            {
+                q: "Em 'Ojos Así', Shakira mistura Pop Latino com elementos de qual cultura musical?",
+                options: ["Música Árabe / Oriente Médio", "K-Pop", "Flamenco Espanhol", "Reggae Jamaicano"],
+                answer: 0
+            }
+        ];
+
+        /* =========================================================
+           SISTEMA DE ÁUDIO SINTÉTICO (Web Audio API)
+           ========================================================= */
+        class SoundSystem {
+            constructor() {
+                this.ctx = null;
+                this.soundEnabled = true;
+                this.musicEnabled = false;
+                this.bgMusicTimer = null;
+                this.step = 0;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playCorrect() {
+                if (!this.soundEnabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+
+            playWrong() {
+                if (!this.soundEnabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.setValueAtTime(196, now + 0.15); // G3
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+
+            playFanfare() {
+                if (!this.soundEnabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const notes = [523.25, 659.25, 783.99, 1046.50, 880, 1046.50];
+                const times = [0, 0.12, 0.24, 0.36, 0.55, 0.75];
+
+                notes.forEach((freq, idx) => {
+                    const now = this.ctx.currentTime + times[idx];
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                });
+            }
+
+            toggleMusicLoop() {
+                if (this.musicEnabled) {
+                    this.startSynthMusic();
+                } else {
+                    this.stopSynthMusic();
+                }
+            }
+
+            startSynthMusic() {
+                if (this.bgMusicTimer) return;
+                this.init();
+                
+                // Ritmo pop latino simples gerado por synth em loop
+                const melody = [329.63, 392.00, 440.00, 392.00, 329.63, 293.66, 329.63, 261.63];
+                let index = 0;
+
+                this.bgMusicTimer = setInterval(() => {
+                    if (!this.musicEnabled || !this.ctx) return;
+                    
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(melody[index], now);
+
+                    gain.gain.setValueAtTime(0.03, now); // bem baixinho de fundo
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+
+                    index = (index + 1) % melody.length;
+                }, 300);
+            }
+
+            stopSynthMusic() {
+                if (this.bgMusicTimer) {
+                    clearInterval(this.bgMusicTimer);
+                    this.bgMusicTimer = null;
+                }
+            }
+        }
+
+        const soundSys = new SoundSystem();
+
+        /* =========================================================
+           ESTADO E LÓGICA DO JOGO
+           ========================================================= */
+        let playerName = "";
+        let selectedQuestions = [];
+        let currentQIndex = 0;
+        let score = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let answered = false;
+
+        // UI Element References
+        const screenWelcome = document.getElementById('screen-welcome');
+        const screenQuiz = document.getElementById('screen-quiz');
+        const screenResult = document.getElementById('screen-result');
+
+        // Toggle Audio Controls
+        function toggleSound() {
+            soundSys.soundEnabled = !soundSys.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const text = document.getElementById('sound-text');
+            if (soundSys.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-pink-400';
+                text.innerText = 'Som ON';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+                text.innerText = 'Som OFF';
+            }
+        }
+
+        function toggleMusic() {
+            soundSys.musicEnabled = !soundSys.musicEnabled;
+            soundSys.init();
+            soundSys.toggleMusicLoop();
+
+            const icon = document.getElementById('music-icon');
+            const text = document.getElementById('music-text');
+            if (soundSys.musicEnabled) {
+                icon.className = 'fa-solid fa-music text-yellow-400 animate-bounce';
+                text.innerText = 'Música ON';
+            } else {
+                icon.className = 'fa-solid fa-music text-gray-400';
+                text.innerText = 'Música OFF';
+            }
+        }
+
+        // Iniciar Quiz
+        function startQuiz() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            playerName = nameInput !== "" ? nameInput : "Fã Sem Nome";
+
+            // Sorteia 5 perguntas aleatórias das 50
+            const shuffled = [...SHAKIRA_QUESTIONS].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, 5);
+
+            currentQIndex = 0;
+            score = 0;
+            timerSeconds = 0;
+
+            // Iniciar Cronômetro
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                document.getElementById('quiz-timer').innerText = `${timerSeconds}s`;
+            }, 1000);
+
+            // Transição de Telas
+            screenWelcome.classList.add('hidden');
+            screenResult.classList.add('hidden');
+            screenQuiz.classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // Renderizar Pergunta Atual
+        function renderQuestion() {
+            answered = false;
+            const qData = selectedQuestions[currentQIndex];
+
+            // Atualiza cabeçalho
+            document.getElementById('current-q-num').innerText = currentQIndex + 1;
+            document.getElementById('progress-bar').style.width = `${((currentQIndex + 1) / 5) * 100}%`;
+            document.getElementById('question-text').innerText = qData.q;
+
+            // Esconde o feedback
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.add('opacity-0');
+
+            // Renderiza opções
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D'];
+
+            qData.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left font-medium text-sm sm:text-base text-gray-100 flex items-center justify-between hover:bg-white/10`;
+                btn.onclick = () => selectOption(idx, btn);
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-xl bg-white/10 font-bold text-xs flex items-center justify-center text-pink-400 border border-white/10">${letters[idx]}</span>
+                        <span>${optText}</span>
+                    </div>
+                    <i class="fa-regular fa-circle text-gray-500 text-sm status-icon"></i>
+                `;
+
+                container.appendChild(btn);
+            });
+        }
+
+        // Escolha de Opção
+        function selectOption(selectedIndex, btnElement) {
+            if (answered) return;
+            answered = true;
+
+            const qData = selectedQuestions[currentQIndex];
+            const isCorrect = selectedIndex === qData.answer;
+            const allBtns = document.querySelectorAll('.option-btn');
+
+            // Desabilita todas para evitar duplos cliques
+            allBtns.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                score++;
+                soundSys.playCorrect();
+                btnElement.classList.add('correct-anim');
+                btnElement.querySelector('.status-icon').className = 'fa-solid fa-circle-check text-white text-lg';
+            } else {
+                soundSys.playWrong();
+                btnElement.classList.add('wrong-anim');
+                btnElement.querySelector('.status-icon').className = 'fa-solid fa-circle-xmark text-white text-lg';
+
+                // Destaca a correta
+                const correctBtn = allBtns[qData.answer];
+                correctBtn.classList.add('correct-anim');
+                correctBtn.querySelector('.status-icon').className = 'fa-solid fa-circle-check text-white text-lg';
+            }
+
+            // Exibe caixa de feedback
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackMsg = document.getElementById('feedback-msg');
+
+            if (isCorrect) {
+                feedbackMsg.innerHTML = `<i class="fa-solid fa-sparkles text-yellow-400"></i> <span class="text-emerald-400">Resposta Correta! Hips don't lie!</span>`;
+            } else {
+                feedbackMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation text-red-400"></i> <span class="text-red-300">Resposta Incorreta!</span>`;
+            }
+
+            feedbackBox.classList.remove('opacity-0');
+        }
+
+        // Próxima Pergunta ou Finalizar
+        function nextQuestion() {
+            if (!answered) {
+                alert("Por favor, selecione uma opção antes de avançar!");
+                return;
+            }
+
+            if (currentQIndex < 4) {
+                currentQIndex++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Finalizar Quiz
+        function finishQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Cálculo de Pontos: (Acertos * 200) - bônus de agilidade
+            const timeBonus = Math.max(0, 100 - timerSeconds);
+            const totalPoints = (score * 200) + (score > 0 ? timeBonus : 0);
+
+            // Salva no Ranking
+            saveScore(playerName, score, timerSeconds, totalPoints);
+
+            // Atualiza Tela Final
+            document.getElementById('res-score').innerText = `${score}/5`;
+            document.getElementById('res-time').innerText = `${timerSeconds}s`;
+            document.getElementById('res-points').innerText = totalPoints;
+
+            const resTitle = document.getElementById('result-title');
+            const resSubtitle = document.getElementById('result-subtitle');
+            const resIcon = document.getElementById('result-icon');
+
+            if (score === 5) {
+                resTitle.innerText = "Loba Suprema! 👑";
+                resSubtitle.innerText = "Você domina absolutamente tudo sobre a Shakira!";
+                resIcon.className = "fa-solid fa-crown text-yellow-400";
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+                }
+                soundSys.playFanfare();
+            } else if (score >= 3) {
+                resTitle.innerText = "Super Fã! ✨";
+                resSubtitle.innerText = "Excelente resultado! Seu conhecimento é muito alto.";
+                resIcon.className = "fa-solid fa-star text-yellow-400";
+            } else {
+                resTitle.innerText = "Continue Tentando! 🎵";
+                resSubtitle.innerText = "Ouça mais alguns hits da Shakira e tente novamente!";
+                resIcon.className = "fa-solid fa-music text-pink-400";
+            }
+
+            // Atualiza a tabela do resultado
+            renderResultLeaderboard();
+
+            // Troca telas
+            screenQuiz.classList.add('hidden');
+            screenResult.classList.remove('hidden');
+        }
+
+        function resetAndHome() {
+            screenResult.classList.add('hidden');
+            screenQuiz.classList.add('hidden');
+            screenWelcome.classList.remove('hidden');
+        }
+
+        /* =========================================================
+           SISTEMA DE RANKING (LocalStorage)
+           ========================================================= */
+        const STORAGE_KEY = 'shakira_quiz_ranking_v1';
+
+        function getRanking() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveScore(name, scoreVal, timeVal, pointsVal) {
+            const list = getRanking();
+            const newEntry = {
+                name: name,
+                score: scoreVal,
+                time: timeVal,
+                points: pointsVal,
+                date: new Date().toLocaleDateString('pt-BR')
+            };
+
+            list.push(newEntry);
+            
+            // Ordena por Pontos (Decrescente) e depois por Tempo (Crescente)
+            list.sort((a, b) => b.points - a.points || a.time - b.time);
+
+            // Mantém apenas os 20 melhores
+            const top20 = list.slice(0, 20);
+
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(top20));
+            } catch (e) {
+                console.error("Erro ao salvar ranking no LocalStorage", e);
+            }
+        }
+
+        function renderResultLeaderboard() {
+            const list = getRanking().slice(0, 5); // Top 5
+            const tbody = document.getElementById('result-leaderboard-body');
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum registro ainda.</td></tr>`;
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const isCurrent = item.name === playerName && item.score === score && item.time === timerSeconds;
+                const tr = document.createElement('tr');
+                tr.className = isCurrent ? 'bg-pink-500/20 font-bold text-pink-300' : 'hover:bg-white/5';
+
+                tr.innerHTML = `
+                    <td class="p-3 text-xs">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</td>
+                    <td class="p-3 font-semibold text-white">${escapeHtml(item.name)}</td>
+                    <td class="p-3 text-center text-xs text-gray-300">${item.score}/5</td>
+                    <td class="p-3 text-right text-emerald-400 font-bold">${item.points} pts</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function showRankingModal() {
+            const list = getRanking();
+            const tbody = document.getElementById('full-leaderboard-body');
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">Nenhuma pontuação registrada. Seja o primeiro a jogar!</td></tr>`;
+            } else {
+                list.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/5';
+                    tr.innerHTML = `
+                        <td class="p-3 text-xs font-bold">${index === 0 ? '👑 1º' : `${index + 1}º`}</td>
+                        <td class="p-3 font-medium text-white">${escapeHtml(item.name)}</td>
+                        <td class="p-3 text-center text-pink-400 font-bold">${item.score}/5</td>
+                        <td class="p-3 text-center text-gray-300 text-xs">${item.time}s</td>
+                        <td class="p-3 text-right text-yellow-400 font-extrabold">${item.points}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('modal-ranking').classList.remove('hidden');
+        }
+
+        function closeRankingModal() {
+            document.getElementById('modal-ranking').classList.add('hidden');
+        }
+
+        function clearRanking() {
+            if (confirm("Deseja realmente apagar todo o histórico de pontuações?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                showRankingModal();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.innerText = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
